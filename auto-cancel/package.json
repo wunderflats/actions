@@ -1,0 +1,12 @@
+{
+  "name": "auto-cancel",
+  "version": "0.0.1",
+  "description": "Github action to automatically cancel workflows on new push",
+  "main": "main.js",
+  "author": "Emmanuel Viala <emmanuel.viala@wunderflats.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.0"
+  }
+}
