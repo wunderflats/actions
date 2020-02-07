@@ -6,7 +6,7 @@ This repository contains a set of helpful github actions created and maintained 
 
 ## auto-cancel
 
-This action automatically cancels any long lasting actions still running for the same branch. This helps save computing time by only letting the last CI trigger to run completely.
+This action automatically cancels all the other actions still running for the same branch. This helps save computing time by only letting the last CI trigger to run completely.
 
 #### Example:
 
