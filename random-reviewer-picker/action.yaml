@@ -1,0 +1,28 @@
+name: "Random reviewer picker"
+description: "Picks reviewers and maintainers for PRs reviews from a predefined list"
+author: "Emmanuel Viala"
+inputs:
+  GITHUB_TOKEN:
+    description: "A valid token for listing and cancelling workflows"
+    required: true
+  reviewer_list:
+    description: "Comma separated list of github handles for the reviewers"
+    required: true
+  reviewer_amount:
+    description: "Amount of reviewers to pick"
+    required: false
+    default: 1
+  maintainers_list:
+    description: "Comma separated list of github handles for the maintainers"
+    required: true
+  maintainers_amount:
+    description: "Amount of maintainers to pick"
+    required: false
+    default: 1
+  skip_busy:
+    description: "Automatically skip reviewers and maintainers which have a busy state"
+    required: false
+    default: true
+runs:
+  using: "node12"
+  main: "main.js"
