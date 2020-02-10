@@ -12,10 +12,10 @@ inputs:
     description: "Amount of reviewers to pick"
     required: false
     default: 1
-  maintainers_list:
+  maintainer_list:
     description: "Comma separated list of github handles for the maintainers"
     required: true
-  maintainers_amount:
+  maintainer_amount:
     description: "Amount of maintainers to pick"
     required: false
     default: 1

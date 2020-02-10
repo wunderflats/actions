@@ -34,10 +34,12 @@ function getInputs() {
  * Get user "busy" status from github API
  **/
 async function isUserBusy(octokit, userHandle) {
-  const { userStatus } = await octokit.graphql({
+  core.info(`Checking status of "${userHandle}"`);
+
+  const { user } = await octokit.graphql({
     query: `
     query userStatus($user: String!) {
-      user(login: $user}) {
+      user(login: $user) {
         status {
           indicatesLimitedAvailability
         }
@@ -46,7 +48,12 @@ async function isUserBusy(octokit, userHandle) {
     user: userHandle
   });
 
-  return userStatus.status.indicatesLimitedAvailability;
+  // If user never changed their status, then status is null
+  if (user.status && user.status.indicatesLimitedAvailability) {
+    return userStatus.user.status.indicatesLimitedAvailability;
+  }
+
+  return false;
 }
 
 /**
@@ -67,6 +74,7 @@ async function run() {
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/", 2);
   const pull_number = actionEvents.pull_request.number;
+  core.info(`Adding reviewers to pull request #${pull_number}`);
 
   const octokit = new github.GitHub(GITHUB_TOKEN);
 
@@ -89,7 +97,7 @@ async function run() {
     const filtered_reviewers = [];
     if (skip_busy) {
       for (const reviewer of reviewer_list) {
-        if (await !isUserBusy(reviewer)) {
+        if (!(await isUserBusy(octokit, reviewer))) {
           filtered_reviewers.push(reviewer);
         }
       }
@@ -107,7 +115,7 @@ async function run() {
     const filtered_maintainers = [];
     if (skip_busy) {
       for (const maintainer of maintainer_list) {
-        if (await !isUserBusy(maintainer)) {
+        if (!(await isUserBusy(octokit, maintainer))) {
           filtered_maintainers.push(maintainer);
         }
       }
