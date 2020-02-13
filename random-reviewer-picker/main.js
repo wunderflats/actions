@@ -6,26 +6,26 @@ const { random } = require("lodash");
  * Fetch and transform inputs into usable variables
  **/
 function getInputs() {
-  const reviewer_list = core
+  const reviewerList = core
     .getInput("reviewer_list")
     .split(",")
     .map(i => i.replace(" ", ""));
-  const reviewer_amount = parseInt(core.getInput("reviewer_amount"));
-  const maintainer_list = core
+  const reviewerAmount = parseInt(core.getInput("reviewer_amount"));
+  const maintainerList = core
     .getInput("maintainer_list")
     .split(",")
     .map(i => i.replace(" ", ""));
-  const maintainer_amount = parseInt(core.getInput("maintainer_amount"));
-  const skip_busy = !!core.getInput("skip_busy");
+  const maintainerAmount = parseInt(core.getInput("maintainer_amount"));
+  const skipBusy = !!core.getInput("skip_busy");
 
   const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
 
   return {
-    reviewer_list,
-    reviewer_amount,
-    maintainer_list,
-    maintainer_amount,
-    skip_busy,
+    reviewerList,
+    reviewerAmount,
+    maintainerList,
+    maintainerAmount,
+    skipBusy,
     GITHUB_TOKEN
   };
 }
@@ -57,6 +57,30 @@ async function isUserBusy(octokit, userHandle) {
 }
 
 /**
+ * Remove busy user if needed from an array of user names
+ **/
+async function pickUsers(userList, pickAmount, removeBusy) {
+  const pickedUsers = [];
+  const filteredList = [];
+
+  if (removeBusy) {
+    for (const user of userList) {
+      if (!(await isUserBusy(octokit, user))) {
+        filteredList.push(user);
+      }
+    }
+  } else {
+    filteredList = userList;
+  }
+
+  for (let i = 0; i < pickAmount; i++) {
+    pickedUsers.push(filteredList[random(0, filteredList.length - 1)]);
+  }
+
+  return pickedUsers;
+}
+
+/**
  * Main action entry point
  **/
 async function run() {
@@ -64,17 +88,17 @@ async function run() {
   const actionEvents = require(process.env.GITHUB_EVENT_PATH);
 
   const {
-    reviewer_list,
-    reviewer_amount,
-    maintainer_list,
-    maintainer_amount,
-    skip_busy,
+    reviewerList,
+    reviewerAmount,
+    maintainerList,
+    maintainerAmount,
+    skipBusy,
     GITHUB_TOKEN
   } = getInputs();
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/", 2);
-  const pull_number = actionEvents.pull_request.number;
-  core.info(`Adding reviewers to pull request #${pull_number}`);
+  const prNumber = actionEvents.pull_request.number;
+  core.info(`Adding reviewers to pull request #${prNumber}`);
 
   const octokit = new github.GitHub(GITHUB_TOKEN);
 
@@ -83,7 +107,7 @@ async function run() {
     await octokit.pulls.listReviewRequests({
       owner,
       repo,
-      pull_number
+      pull_number: prNumber
     })
   ).data;
 
@@ -91,50 +115,24 @@ async function run() {
   if (users.length === 0 && teams.length === 0) {
     core.info("Reviewers needed, picking reviewers.");
 
-    const pickedReviewers = [];
-
     // Reviewers:
-    const filtered_reviewers = [];
-    if (skip_busy) {
-      for (const reviewer of reviewer_list) {
-        if (!(await isUserBusy(octokit, reviewer))) {
-          filtered_reviewers.push(reviewer);
-        }
-      }
-    } else {
-      filtered_reviewers = reviewers_list;
-    }
-
-    for (let i = 0; i < reviewer_amount; i++) {
-      pickedReviewers.push(
-        filtered_reviewers[random(0, filtered_reviewers.length - 1)]
-      );
-    }
+    const reviewers = await pickUsers(reviewerList, reviewerAmount, skipBusy);
 
     // Maintainers:
-    const filtered_maintainers = [];
-    if (skip_busy) {
-      for (const maintainer of maintainer_list) {
-        if (!(await isUserBusy(octokit, maintainer))) {
-          filtered_maintainers.push(maintainer);
-        }
-      }
-    } else {
-      filtered_maintainers = maintainer_list;
-    }
+    const maintainers = await pickUsers(
+      maintainerList,
+      maintainerAmount,
+      skipBusy
+    );
 
-    for (let i = 0; i < maintainer_amount; i++) {
-      pickedReviewers.push(
-        filtered_maintainers[random(0, filtered_maintainers.length - 1)]
-      );
-    }
-
-    core.info(`Assigning ${pickedReviewers.join(", ")} to code review`);
+    core.info(
+      `Assigning ${[...reviewers, ...maintainers].join(", ")} to code review`
+    );
     await octokit.pulls.createReviewRequest({
       owner,
       repo,
-      pull_number,
-      reviewers: pickedReviewers
+      pull_number: prNumber,
+      reviewers: [...reviewers, ...maintainers]
     });
   }
 }
