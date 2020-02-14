@@ -61,7 +61,7 @@ async function isUserBusy(octokit, userHandle) {
  **/
 async function pickUsers(userList, pickAmount, removeBusy) {
   const pickedUsers = [];
-  const filteredList = [];
+  let filteredList = [];
 
   if (removeBusy) {
     for (const user of userList) {
