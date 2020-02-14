@@ -9,7 +9,7 @@ function getInputs() {
   const reviewerList = core
     .getInput("reviewer_list")
     .split(",")
-    .map(i => i.replace(" ", ""));
+    .map(i => i.trim());
   const reviewerAmount = parseInt(core.getInput("reviewer_amount"));
   const maintainerList = core
     .getInput("maintainer_list")
