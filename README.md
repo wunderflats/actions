@@ -21,4 +21,21 @@ jobs:
 
 ---
 
+## prevent-concurrent-deploy
+
+A github action to prevent concurrent deployment. This step will fail if there is another active workflow on the same branch.
+
+#### Example:
+
+```
+jobs:
+  prevent-concurrent-deploy:
+    steps:
+      - uses: wunderflats/actions/prevent-concurrent-deploy@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+---
+
 ## License: Apache-2.0
