@@ -7,16 +7,16 @@ const { random } = require("lodash");
  **/
 function getInputs() {
   const reviewerList = core
-    .getInput("reviewer_list")
+    .getInput("reviewerList")
     .split(",")
     .map(i => i.trim());
-  const reviewerAmount = parseInt(core.getInput("reviewer_amount"));
+  const reviewerAmount = parseInt(core.getInput("reviewerAmount"));
   const maintainerList = core
-    .getInput("maintainer_list")
+    .getInput("maintainerList")
     .split(",")
-    .map(i => i.replace(" ", ""));
-  const maintainerAmount = parseInt(core.getInput("maintainer_amount"));
-  const skipBusy = !!core.getInput("skip_busy");
+    .map(i => i.trim());
+  const maintainerAmount = parseInt(core.getInput("maintainerAmount"));
+  const skipBusy = !!core.getInput("skipBusy");
 
   const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
 
@@ -57,9 +57,10 @@ async function isUserBusy(octokit, userHandle) {
 }
 
 /**
- * Remove busy user if needed from an array of user names
+ * Remove busy user if needed and pr owner from an array of user names
+ * then randomly pick the requested amount of users
  **/
-async function pickUsers(userList, pickAmount, removeBusy) {
+async function pickUsers(userList, pickAmount, removeBusy, prOwner, octokit) {
   const pickedUsers = [];
   let filteredList = [];
 
@@ -71,6 +72,10 @@ async function pickUsers(userList, pickAmount, removeBusy) {
     }
   } else {
     filteredList = userList;
+  }
+
+  if (filteredList.indexOf(prOwner) >= 0) {
+    filteredList.splice(filteredList.indexOf(prOwner), 1);
   }
 
   for (let i = 0; i < pickAmount; i++) {
@@ -111,18 +116,35 @@ async function run() {
     })
   ).data;
 
+  // Get PR owner
+  const { user: prOwner } = (
+    await octokit.pulls.get({
+      owner,
+      repo,
+      pull_number: prNumber
+    })
+  ).data;
+
   // If we needs to add reviewers
   if (users.length === 0 && teams.length === 0) {
     core.info("Reviewers needed, picking reviewers.");
 
     // Reviewers:
-    const reviewers = await pickUsers(reviewerList, reviewerAmount, skipBusy);
+    const reviewers = await pickUsers(
+      reviewerList,
+      reviewerAmount,
+      skipBusy,
+      prOwner.login,
+      octokit
+    );
 
     // Maintainers:
     const maintainers = await pickUsers(
       maintainerList,
       maintainerAmount,
-      skipBusy
+      skipBusy,
+      prOwner.login,
+      octokit
     );
 
     core.info(
@@ -137,4 +159,7 @@ async function run() {
   }
 }
 
-run().catch(error => core.setFailed(error.message));
+run().catch(error => {
+  console.error(error);
+  return core.setFailed(error.messsage);
+});
