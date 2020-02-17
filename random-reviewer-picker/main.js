@@ -75,7 +75,7 @@ async function pickUsers(userList, pickAmount, removeBusy, prOwner) {
   }
 
   if (filteredList.indexOf(prOwner) >= 0) {
-    filteredList.splice(filteredList.indexOf(prOwner));
+    filteredList.splice(filteredList.indexOf(prOwner), 1);
   }
 
   for (let i = 0; i < pickAmount; i++) {
