@@ -157,4 +157,7 @@ async function run() {
   }
 }
 
-run().catch(error => core.setFailed(error.message));
+run().catch(error => {
+  console.error(error);
+  return core.setFailed(error.messsage);
+});
