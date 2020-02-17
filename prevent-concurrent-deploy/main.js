@@ -20,23 +20,23 @@ async function run() {
   const octokit = new github.GitHub(GITHUB_TOKEN);
 
   // List running workflows (in the last 100 triggers)
-  const { data } = await octokit.actions.listRepoWorkflowRuns({
-    owner,
-    repo,
-    branch,
-    per_page: 100
-  });
+  const { workflow_runs } = (
+    await octokit.actions.listRepoWorkflowRuns({
+      owner,
+      repo,
+      branch,
+      per_page: 100
+    })
+  ).data;
 
-  // Filter workflows on the same branch but different commit (and still active)
-  const workflowsToCancel = data.workflow_runs
-    .filter(
+  // If we have workflows on the same branch but different commit (and still active)
+  // Set current workflow to failed (so it can be re-run)
+  if (
+    workflow_runs.some(
       workflow =>
-        workflow.head_sha != commit_hash && workflow.status != "completed"
+        workflow.head_sha !== commit_hash && workflow.status !== "completed"
     )
-    .map(item => item.id);
-
-  // Set workflow to failed (so it can be re-run) if other workflows are still running
-  if (workflowsToCancel.length > 0) {
+  ) {
     core.setFailed("Another deployment is currently running, aborting");
   }
 }
