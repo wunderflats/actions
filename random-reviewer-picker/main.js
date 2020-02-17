@@ -60,7 +60,7 @@ async function isUserBusy(octokit, userHandle) {
  * Remove busy user if needed and pr owner from an array of user names
  * then randomly pick the requested amount of users
  **/
-async function pickUsers(userList, pickAmount, removeBusy, prOwner) {
+async function pickUsers(userList, pickAmount, removeBusy, prOwner, octokit) {
   const pickedUsers = [];
   let filteredList = [];
 
@@ -134,7 +134,8 @@ async function run() {
       reviewerList,
       reviewerAmount,
       skipBusy,
-      prOwner.login
+      prOwner.login,
+      octokit
     );
 
     // Maintainers:
@@ -142,7 +143,8 @@ async function run() {
       maintainerList,
       maintainerAmount,
       skipBusy,
-      prOwner.login
+      prOwner.login,
+      octokit
     );
 
     core.info(
