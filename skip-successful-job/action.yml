@@ -5,12 +5,12 @@ inputs:
   GITHUB_TOKEN:
     description: "A valid token for listing and cancelling workflows"
     required: true
-  stepName:
-    description: "Name of the step to check for."
+  jobName:
+    description: "Name of the job to check for."
     required: true
 outputs:
   wasSuccessful:
-    description: "The step was successful in a preview workflow for the same commit hash"
+    description: "The job was successful in a preview workflow for the same commit hash"
 runs:
   using: 'node12'
   main: 'dist/index.js'
