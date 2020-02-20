@@ -8,7 +8,7 @@ const branch = process.env.GITHUB_HEAD_REF
   : process.env.GITHUB_REF!.replace('refs/heads/', '')
 
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
-const stepName = core.getInput('stepName')
+const jobName = core.getInput('jobName')
 
 const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
 
@@ -49,7 +49,7 @@ async function run(): Promise<void> {
       })
     ).data.jobs
 
-    const matchingJob = jobs.find(job => job.name === stepName)
+    const matchingJob = jobs.find(job => job.name === jobName)
 
     if (matchingJob == null) {
       return core.setOutput('wasSuccessful', 'false')
