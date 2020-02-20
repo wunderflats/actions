@@ -2,6 +2,10 @@ import {Octokit} from '@octokit/rest'
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 
+console.log('STARTING.')
+
+core.debug('starting?')
+
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const branch = process.env.GITHUB_HEAD_REF
   ? process.env.GITHUB_HEAD_REF
