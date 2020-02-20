@@ -1,17 +1,67 @@
+import {Octokit} from '@octokit/rest'
+import * as github from '@actions/github'
 import * as core from '@actions/core'
-import {wait} from './wait'
+
+const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
+const branch = process.env.GITHUB_HEAD_REF
+  ? process.env.GITHUB_HEAD_REF
+  : process.env.GITHUB_REF!.replace('refs/heads/', '')
+
+const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
+const stepName = core.getInput('stepName')
+
+const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const actionEvents = await import(process.env.GITHUB_EVENT_PATH!)
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    // In case you are wondering, github is not consistent here. On the UI it will give you
+    // the commit hash of your branch head, but in reality GITHUB_SHA is the commit hash
+    // of your commit on the target branch of your PR. So we parse it from the event file.
+    const commitHash = process.env.GITHUB_HEAD_REF
+      ? actionEvents.pull_request.head.sha
+      : process.env.GITHUB_SHA
 
-    core.setOutput('time', new Date().toTimeString())
+    const workflowRuns = (
+      await octokit.actions.listRepoWorkflowRuns({
+        owner,
+        repo,
+        branch,
+        status: 'completed',
+        per_page: 100
+      })
+    ).data.workflow_runs
+
+    const matchingWorkflowRun = workflowRuns.find(
+      workflowRun => workflowRun.head_sha === commitHash
+    )
+
+    if (matchingWorkflowRun == null) {
+      return core.setOutput('wasSuccessful', 'false')
+    }
+
+    const jobs = (
+      await octokit.actions.listJobsForWorkflowRun({
+        owner,
+        repo,
+        run_id: matchingWorkflowRun.id
+      })
+    ).data.jobs
+
+    const matchingJob = jobs.find(job => job.name === stepName)
+
+    if (matchingJob == null) {
+      return core.setOutput('wasSuccessful', 'false')
+    }
+
+    if (matchingJob.conclusion === 'success') {
+      return core.setOutput('wasSuccessful', 'true')
+    } else {
+      return core.setOutput('wasSuccessful', 'false')
+    }
   } catch (error) {
+    console.error(error)
     core.setFailed(error.message)
   }
 }
