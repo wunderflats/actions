@@ -2013,6 +2013,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
+console.log('STARTING.');
+core.debug('starting?');
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const branch = process.env.GITHUB_HEAD_REF
     ? process.env.GITHUB_HEAD_REF
