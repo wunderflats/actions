@@ -2013,8 +2013,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
-console.log('STARTING.');
-core.debug('starting?');
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const branch = process.env.GITHUB_HEAD_REF
     ? process.env.GITHUB_HEAD_REF
@@ -2042,7 +2040,7 @@ function run() {
             const matchingWorkflowRun = workflowRuns.find(workflowRun => workflowRun.head_sha === commitHash);
             console.log({ matchingWorkflowRun });
             if (matchingWorkflowRun == null) {
-                return core.setOutput('wasSuccessful', 'false');
+                return core.setOutput('conclusion', 'pending');
             }
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
                 owner,
@@ -2053,14 +2051,9 @@ function run() {
             const matchingJob = jobs.find(job => job.name === jobName);
             console.log({ matchingJob });
             if (matchingJob == null) {
-                return core.setOutput('wasSuccessful', 'false');
+                return core.setOutput('conclusion', 'pending');
             }
-            if (matchingJob.conclusion === 'success') {
-                return core.setOutput('wasSuccessful', 'true');
-            }
-            else {
-                return core.setOutput('wasSuccessful', 'false');
-            }
+            return core.setOutput('conclusion', matchingJob.conclusion);
         }
         catch (error) {
             console.error(error);

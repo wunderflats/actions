@@ -2,10 +2,6 @@ import {Octokit} from '@octokit/rest'
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 
-console.log('STARTING.')
-
-core.debug('starting?')
-
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const branch = process.env.GITHUB_HEAD_REF
   ? process.env.GITHUB_HEAD_REF
@@ -45,7 +41,7 @@ async function run(): Promise<void> {
     console.log({matchingWorkflowRun})
 
     if (matchingWorkflowRun == null) {
-      return core.setOutput('wasSuccessful', 'false')
+      return core.setOutput('conclusion', 'pending')
     }
 
     const jobs = (
@@ -63,14 +59,10 @@ async function run(): Promise<void> {
     console.log({matchingJob})
 
     if (matchingJob == null) {
-      return core.setOutput('wasSuccessful', 'false')
+      return core.setOutput('conclusion', 'pending')
     }
 
-    if (matchingJob.conclusion === 'success') {
-      return core.setOutput('wasSuccessful', 'true')
-    } else {
-      return core.setOutput('wasSuccessful', 'false')
-    }
+    return core.setOutput('conclusion', matchingJob.conclusion)
   } catch (error) {
     console.error(error)
     core.setFailed(error.message)

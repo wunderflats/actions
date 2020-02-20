@@ -1,0 +1,16 @@
+name: 'get-last-run-conclusion'
+description: 'Get the conclusion of the job in the last workflow run for this commit.'
+author: 'Wunderflats GmbH'
+inputs:
+  GITHUB_TOKEN:
+    description: "A valid token for listing workflows"
+    required: true
+  jobName:
+    description: "Name of the job to check for."
+    required: true
+outputs:
+  conclusion:
+    description: "Conclusion of the job in the last workflow run for the same commit."
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
