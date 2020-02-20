@@ -33,9 +33,13 @@ async function run(): Promise<void> {
       })
     ).data.workflow_runs
 
+    console.log({workflowRuns})
+
     const matchingWorkflowRun = workflowRuns.find(
       workflowRun => workflowRun.head_sha === commitHash
     )
+
+    console.log({matchingWorkflowRun})
 
     if (matchingWorkflowRun == null) {
       return core.setOutput('wasSuccessful', 'false')
@@ -49,7 +53,11 @@ async function run(): Promise<void> {
       })
     ).data.jobs
 
+    console.log({jobs})
+
     const matchingJob = jobs.find(job => job.name === jobName)
+
+    console.log({matchingJob})
 
     if (matchingJob == null) {
       return core.setOutput('wasSuccessful', 'false')
