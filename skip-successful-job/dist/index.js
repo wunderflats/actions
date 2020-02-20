@@ -2036,7 +2036,6 @@ function run() {
                 owner,
                 repo,
                 branch,
-                status: 'completed',
                 per_page: 100
             })).data.workflow_runs;
             console.log({ workflowRuns });
