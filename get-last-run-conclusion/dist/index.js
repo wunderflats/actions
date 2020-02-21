@@ -2048,7 +2048,7 @@ function run() {
                 run_id: matchingWorkflowRun.id
             })).data.jobs;
             console.log({ jobs });
-            const matchingJob = jobs.find(job => job.name === jobName);
+            const matchingJob = jobs.find(job => job.name === jobName && job.status === 'completed');
             console.log({ matchingJob });
             if (matchingJob == null) {
                 return core.setOutput('conclusion', 'pending');

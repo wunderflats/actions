@@ -54,7 +54,9 @@ async function run(): Promise<void> {
 
     console.log({jobs})
 
-    const matchingJob = jobs.find(job => job.name === jobName)
+    const matchingJob = jobs.find(
+      job => job.name === jobName && job.status === 'completed'
+    )
 
     console.log({matchingJob})
 
