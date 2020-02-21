@@ -2025,9 +2025,12 @@ function run() {
                 owner,
                 repo,
                 run_id: GITHUB_RUN_ID
-            })).data.jobs;
+            })).data.jobs
+                .filter(job => job.name === jobName)
+                .filter(job => job.status === 'completed')
+                .sort((jobA, jobB) => Number(jobA.started_at < jobB.started_at));
             console.log({ jobs });
-            const matchingJob = jobs.find(job => job.name === jobName && job.status === 'completed');
+            const matchingJob = jobs[0];
             console.log({ matchingJob });
             if (matchingJob == null) {
                 return core.setOutput('conclusion', 'pending');
