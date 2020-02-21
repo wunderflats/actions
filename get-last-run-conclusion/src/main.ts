@@ -22,7 +22,19 @@ async function run(): Promise<void> {
       .filter(job => job.name === jobName)
       .filter(job => job.status === 'completed')
       // Sort by started_at in descending order. Latest first.
-      .sort((jobA, jobB) => Number(jobA.started_at < jobB.started_at))
+      .sort((jobA, jobB) => {
+        const timestampA = new Date(jobA.started_at).getTime()
+        const timestampB = new Date(jobB.started_at).getTime()
+        if (timestampA > timestampB) {
+          return -1
+        }
+
+        if (timestampA < timestampB) {
+          return 1
+        }
+
+        return 0
+      })
 
     console.log({jobs})
 
