@@ -2014,41 +2014,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
-const branch = process.env.GITHUB_HEAD_REF
-    ? process.env.GITHUB_HEAD_REF
-    : process.env.GITHUB_REF.replace('refs/heads/', '');
+const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID);
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const jobName = core.getInput('jobName');
 const octokit = new github.GitHub(GITHUB_TOKEN);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const actionEvents = yield Promise.resolve().then(() => __importStar(require(process.env.GITHUB_EVENT_PATH)));
-            // In case you are wondering, github is not consistent here. On the UI it will give you
-            // the commit hash of your branch head, but in reality GITHUB_SHA is the commit hash
-            // of your commit on the target branch of your PR. So we parse it from the event file.
-            const commitHash = process.env.GITHUB_HEAD_REF
-                ? actionEvents.pull_request.head.sha
-                : process.env.GITHUB_SHA;
-            const workflowRuns = (yield octokit.actions.listRepoWorkflowRuns({
-                owner,
-                repo,
-                branch,
-                per_page: 100
-            })).data.workflow_runs;
-            console.log({ workflowRuns });
-            const matchingWorkflowRun = workflowRuns.find(workflowRun => workflowRun.head_sha === commitHash);
-            console.log({ matchingWorkflowRun });
-            if (matchingWorkflowRun == null) {
-                return core.setOutput('conclusion', 'pending');
-            }
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
                 owner,
                 repo,
-                run_id: matchingWorkflowRun.id
+                run_id: GITHUB_RUN_ID
             })).data.jobs;
             console.log({ jobs });
-            const matchingJob = jobs.find(job => job.name === jobName);
+            const matchingJob = jobs.find(job => job.name === jobName && job.status === 'completed');
             console.log({ matchingJob });
             if (matchingJob == null) {
                 return core.setOutput('conclusion', 'pending');
