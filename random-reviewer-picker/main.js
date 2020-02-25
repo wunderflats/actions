@@ -50,7 +50,7 @@ async function isUserBusy(octokit, userHandle) {
 
   // If user never changed their status, then status is null
   if (user.status && user.status.indicatesLimitedAvailability) {
-    return userStatus.user.status.indicatesLimitedAvailability;
+    return user.status.indicatesLimitedAvailability;
   }
 
   return false;
