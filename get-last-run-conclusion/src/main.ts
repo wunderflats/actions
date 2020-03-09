@@ -19,8 +19,11 @@ async function run(): Promise<void> {
         owner,
         repo,
         run_id: GITHUB_RUN_ID,
-        per_page: 100
-      })
+        per_page: 100,
+        // API change require this new parameter which is not yet in oktokit
+        // see: https://github.blog/changelog/2020-03-09-new-filter-parameter-in-workflow-jobs-api/
+        filter: 'all'
+      } as any)
     ).data.jobs
     const filteredJobs = jobs
       .filter(job => job.name === jobName)
