@@ -2021,11 +2021,13 @@ const octokit = new github.GitHub(GITHUB_TOKEN);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log({ owner, repo, GITHUB_RUN_ID, jobName });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
                 owner,
                 repo,
                 run_id: GITHUB_RUN_ID
-            })).data.jobs
+            })).data.jobs;
+            const filteredJobs = jobs
                 .filter(job => job.name === jobName)
                 .filter(job => job.status === 'completed')
                 // Sort by started_at in descending order. Latest first.
@@ -2041,7 +2043,8 @@ function run() {
                 return 0;
             });
             console.log({ jobs });
-            const matchingJob = jobs[0];
+            console.log({ filteredJobs });
+            const matchingJob = filteredJobs[0];
             console.log({ matchingJob });
             if (matchingJob == null) {
                 return core.setOutput('conclusion', 'pending');

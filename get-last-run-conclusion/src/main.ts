@@ -12,6 +12,8 @@ const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
 
 async function run(): Promise<void> {
   try {
+    console.log({owner, repo, GITHUB_RUN_ID, jobName})
+
     const jobs = (
       await octokit.actions.listJobsForWorkflowRun({
         owner,
@@ -19,6 +21,7 @@ async function run(): Promise<void> {
         run_id: GITHUB_RUN_ID
       })
     ).data.jobs
+    const filteredJobs = jobs
       .filter(job => job.name === jobName)
       .filter(job => job.status === 'completed')
       // Sort by started_at in descending order. Latest first.
@@ -37,8 +40,9 @@ async function run(): Promise<void> {
       })
 
     console.log({jobs})
+    console.log({filteredJobs})
 
-    const matchingJob = jobs[0]
+    const matchingJob = filteredJobs[0]
     console.log({matchingJob})
 
     if (matchingJob == null) {
