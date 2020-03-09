@@ -18,7 +18,8 @@ async function run(): Promise<void> {
       await octokit.actions.listJobsForWorkflowRun({
         owner,
         repo,
-        run_id: GITHUB_RUN_ID
+        run_id: GITHUB_RUN_ID,
+        per_page: 100
       })
     ).data.jobs
     const filteredJobs = jobs
