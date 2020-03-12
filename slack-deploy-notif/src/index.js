@@ -3,13 +3,16 @@ const bent = require("bent");
 const {
   INPUT_slackNotifEvent: eventType,
   INPUT_GITHUB_RUN_ID: runId,
-  INPUT_commitMessage: commitMessage,
   INPUT_webhookToken: webhookToken
 } = process.env;
 
+const commitMessage = process.env.INPUT_commitMessage
+  ? process.env.INPUT_commitMessage
+  : "";
+
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/", 2);
 
-if (!eventType || !runId || !commitMessage || !webhookToken) {
+if (!eventType || !runId || !webhookToken) {
   console.error("Missing argument for the slack-notifications actions!");
   process.exit(1);
 }

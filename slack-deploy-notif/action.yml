@@ -13,7 +13,8 @@ inputs:
     required: true
   commitMessage:
     description: "commitMessage"
-    required: true
+    required: false
+    default: ""
   webhookToken:
     description: "webhookToken"
     required: true
