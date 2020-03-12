@@ -1,0 +1,19 @@
+name: "Report status of a workflow on slack"
+description: "Report status of a workflow on slack"
+runs:
+  using: "node12"
+  main: "dist/index.js"
+
+inputs:
+  GITHUB_RUN_ID:
+    description: "GITHUB_RUN_ID"
+    required: true
+  slackNotifEvent:
+    description: "slackNotifEvent"
+    required: true
+  commitMessage:
+    description: "commitMessage"
+    required: true
+  webhookToken:
+    description: "webhookToken"
+    required: true

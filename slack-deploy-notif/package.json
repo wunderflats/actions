@@ -1,0 +1,16 @@
+{
+  "name": "@wunderflats/slack-deploy-notif",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/ncc build ./src -o ./dist -m"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@zeit/ncc": "^0.21.1",
+    "bent": "^7.1.1"
+  },
+  "private": true
+}
