@@ -20,14 +20,15 @@ const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=bran
 
 const eventMap = {
   DEPLOYMENT_TEST_FAIL: {
-    text: `A test check failed preventing deployment of: \n
-  *${commitMessage.trim()}*\n
-<${runLink}|See github action>`
+    text: `A test check failed preventing deployment on master
+    ${
+      commitMessage.trim().length > 0 ? `*${commitMessage.trim()}*` : ""
+    }<${runLink}|See github action>`
   },
   DEPLOYMENT_PAUSED: {
-    text: `The deployment for: \n
-  *${commitMessage.trim()}*\n
- has been paused because of another running deployment. Please resume it when the first deployment is green.
+    text: `The deployment for master ${
+      commitMessage.trim().length > 0 ? `\n*${commitMessage.trim()}*\n` : ""
+    }has been paused because of another running deployment. Please resume it when the first deployment is green.
 <${runLink}|See github action> \n
 <${masterActionPage}|See all running actions>`
   }
