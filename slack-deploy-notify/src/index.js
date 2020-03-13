@@ -1,7 +1,7 @@
 const bent = require("bent");
 
 const {
-  INPUT_SLACK_NOTIF_EVENT: eventType,
+  INPUT_SLACK_NOTIFY_EVENT: eventType,
   INPUT_GITHUB_RUN_ID: runId,
   INPUT_WEBHOOK_TOKEN: webhookToken,
   INPUT_COMMIT_MESSAGE: commitMessage
@@ -17,18 +17,16 @@ if (!eventType || !runId || !webhookToken) {
 
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
 const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`;
+const commit =
+  commitMessage.trim().length > 0 ? `\n*${commitMessage.trim()}*\n` : "";
 
 const eventMap = {
   DEPLOYMENT_TEST_FAIL: {
     text: `A test check failed preventing deployment on master
-    ${
-      commitMessage.trim().length > 0 ? `*${commitMessage.trim()}*` : ""
-    }<${runLink}|See github action>`
+    ${commit}<${runLink}|See github action>`
   },
   DEPLOYMENT_PAUSED: {
-    text: `The deployment for master ${
-      commitMessage.trim().length > 0 ? `\n*${commitMessage.trim()}*\n` : ""
-    }has been paused because of another running deployment. Please resume it when the first deployment is green.
+    text: `The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
 <${runLink}|See github action> \n
 <${masterActionPage}|See all running actions>`
   }

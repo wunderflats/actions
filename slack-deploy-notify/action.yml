@@ -8,8 +8,8 @@ inputs:
   GITHUB_RUN_ID:
     description: "GITHUB_RUN_ID"
     required: true
-  SLACK_NOTIF_EVENT:
-    description: "SLACK_NOTIF_EVENT"
+  SLACK_NOTIFY_EVENT:
+    description: "SLACK_NOTIFY_EVENT"
     required: true
   COMMIT_MESSAGE:
     description: "COMMIT_MESSAGE"

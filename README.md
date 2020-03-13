@@ -59,7 +59,7 @@ jobs:
 
 ---
 
-## slack-deploy-notif
+## slack-deploy-notify
 
 A github action that sends a slack notification depending on status of running jobs in actions.
 
@@ -73,10 +73,10 @@ jobs:
       - id: deploy
         run: return 1
       - if: failure()
-        uses: wunderflats/actions/slack-deploy-notif@master
+        uses: wunderflats/actions/slack-deploy-notify@master
         with:
           GITHUB_RUN_ID: ${{ github.run_id }}
-          SLACK_NOTIF_EVENT: DEPLOYMENT_PAUSED
+          SLACK_NOTIFY_EVENT: DEPLOYMENT_PAUSED
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
