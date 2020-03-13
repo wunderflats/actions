@@ -12,8 +12,11 @@ const commitMessage = process.env.INPUT_commitMessage
 
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/", 2);
 
+console.log(process.env);
+
 if (!eventType || !runId || !webhookToken) {
   console.error("Missing argument for the slack-notifications actions!");
+  console.log({ eventType, runId, webhookToken });
   process.exit(1);
 }
 
