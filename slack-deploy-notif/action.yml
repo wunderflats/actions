@@ -8,13 +8,13 @@ inputs:
   GITHUB_RUN_ID:
     description: "GITHUB_RUN_ID"
     required: true
-  slackNotifEvent:
-    description: "slackNotifEvent"
+  SLACK_NOTIF_EVENT:
+    description: "SLACK_NOTIF_EVENT"
     required: true
-  commitMessage:
-    description: "commitMessage"
+  COMMIT_MESSAGE:
+    description: "COMMIT_MESSAGE"
     required: false
     default: ""
-  webhookToken:
-    description: "webhookToken"
+  WEBHOOK_TOKEN:
+    description: "WEBHOOK_TOKEN"
     required: true
