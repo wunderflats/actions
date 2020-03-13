@@ -76,9 +76,9 @@ jobs:
         uses: wunderflats/actions/slack-deploy-notif@master
         with:
           GITHUB_RUN_ID: ${{ github.run_id }}
-          slackNotifEvent: DEPLOYMENT_PAUSED
-          commitMessage: ${{ github.event.head_commit.message }}
-          webhookToken: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
+          SLACK_NOTIF_EVENT: DEPLOYMENT_PAUSED
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
 
 ---
