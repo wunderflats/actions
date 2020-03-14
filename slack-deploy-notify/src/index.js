@@ -18,7 +18,7 @@ if (!eventType || !runId || !webhookToken) {
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
 const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`;
 const commit =
-  commitMessage.trim().length > 0 ? `\n*${commitMessage.trim()}*\n` : "";
+  commitMessage.trim().length > 0 ? `\n*${commitMessage.trim().split('\n')[0]}*\n` : "";
 
 const eventMap = {
   DEPLOYMENT_TEST_FAIL: {
