@@ -478,10 +478,164 @@ module.exports = windowsRelease;
 
 /***/ }),
 
+/***/ 58:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+/* globals atob, btoa, crypto */
+/* istanbul ignore file */
+
+const bytes = __webpack_require__(101)
+
+bytes.from = (_from, _encoding) => {
+  if (_from instanceof DataView) return _from
+  if (_from instanceof ArrayBuffer) return new DataView(_from)
+  let buffer
+  if (typeof _from === 'string') {
+    if (!_encoding) {
+      _encoding = 'utf-8'
+    } else if (_encoding === 'base64') {
+      buffer = Uint8Array.from(atob(_from), c => c.charCodeAt(0)).buffer
+      return new DataView(buffer)
+    }
+    if (_encoding !== 'utf-8') throw new Error('Browser support for encodings other than utf-8 not implemented')
+    return new DataView((new TextEncoder()).encode(_from).buffer)
+  } else if (typeof _from === 'object') {
+    if (ArrayBuffer.isView(_from)) {
+      if (_from.byteLength === _from.buffer.byteLength) return new DataView(_from.buffer)
+      else return new DataView(_from.buffer, _from.byteOffset, _from.byteLength)
+    }
+  }
+  throw new Error('Unkown type. Cannot convert to ArrayBuffer')
+}
+
+bytes.toString = (_from, encoding) => {
+  _from = bytes(_from, encoding)
+  const uint = new Uint8Array(_from.buffer, _from.byteOffset, _from.byteLength)
+  const str = String.fromCharCode(...uint)
+  if (encoding === 'base64') {
+    /* would be nice to find a way to do this directly from a buffer
+     * instead of doing two string conversions
+     */
+    return btoa(str)
+  } else {
+    return str
+  }
+}
+
+bytes.native = (_from, encoding) => {
+  if (_from instanceof Uint8Array) return _from
+  _from = bytes.from(_from, encoding)
+  return new Uint8Array(_from.buffer, _from.byteOffset, _from.byteLength)
+}
+
+if (process.browser) bytes._randomFill = (...args) => crypto.getRandomValues(...args)
+
+module.exports = bytes
+
+
+/***/ }),
+
 /***/ 87:
 /***/ (function(module) {
 
 module.exports = require("os");
+
+/***/ }),
+
+/***/ 101:
+/***/ (function(module) {
+
+"use strict";
+
+
+const length = (a, b) => {
+  if (a.byteLength === b.byteLength) return a.byteLength
+  else if (a.byteLength > b.byteLength) return a.byteLength
+  return b.byteLength
+}
+
+const bytes = (_from, encoding) => bytes.from(_from, encoding)
+
+bytes.sorter = (a, b) => {
+  a = bytes(a)
+  b = bytes(b)
+  const len = length(a, b)
+  let i = 0
+  while (i < (len - 1)) {
+    if (i >= a.byteLength) return 1
+    else if (i >= b.byteLength) return -1
+
+    if (a.getUint8(i) < b.getUint8(i)) return -1
+    else if (a.getUint8(i) > b.getUint8(i)) return 1
+    i++
+  }
+  return 0
+}
+
+bytes.compare = (a, b) => !bytes.sorter(a, b)
+bytes.memcopy = (_from, encoding) => {
+  const b = bytes(_from, encoding)
+  return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)
+}
+bytes.arrayBuffer = (_from, encoding) => {
+  _from = bytes(_from, encoding)
+  if (_from.buffer.byteLength === _from.byteLength) return _from.buffer
+  return _from.buffer.slice(_from.byteOffset, _from.byteOffset + _from.byteLength)
+}
+const sliceOptions = (_from, start = 0, end = null) => {
+  _from = bytes(_from)
+  end = (end === null ? _from.byteLength : end) - start
+  return [_from.buffer, _from.byteOffset + start, end]
+}
+bytes.slice = (_from, start, end) => new DataView(...sliceOptions(_from, start, end))
+
+bytes.memcopySlice = (_from, start, end) => {
+  const [buffer, offset, length] = sliceOptions(_from, start, end)
+  return buffer.slice(offset, length + offset)
+}
+bytes.typedArray = (_from, _Class = Uint8Array) => {
+  _from = bytes(_from)
+  return new _Class(_from.buffer, _from.byteOffset, _from.byteLength / _Class.BYTES_PER_ELEMENT)
+}
+
+bytes.concat = (_from) => {
+  _from = Array.from(_from)
+  _from = _from.map(b => bytes(b))
+  const length = _from.reduce((x, y) => x + y.byteLength, 0)
+  const ret = new Uint8Array(length)
+  let i = 0
+  for (const part of _from) {
+    const view = bytes.typedArray(part)
+    ret.set(view, i)
+    i += view.byteLength
+  }
+  return ret.buffer
+}
+
+const maxEntropy = 65536
+
+bytes.random = length => {
+  const ab = new ArrayBuffer(length)
+  if (length > maxEntropy) {
+    let i = 0
+    while (i < ab.byteLength) {
+      let len
+      if (i + maxEntropy > ab.byteLength) len = ab.byteLength - i
+      else len = maxEntropy
+      const view = new Uint8Array(ab, i, len)
+      i += maxEntropy
+      bytes._randomFill(view)
+    }
+  } else {
+    const view = new Uint8Array(ab)
+    bytes._randomFill(view)
+  }
+  return ab
+}
+
+module.exports = bytes
+
 
 /***/ }),
 
@@ -2013,38 +2167,32 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
-// import bent from 'bent'
+const bent = __webpack_require__(231);
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID);
-// const {
-//   INPUT_SLACK_NOTIFY_EVENT: eventType,
-//   INPUT_GITHUB_RUN_ID: runId,
-//   INPUT_WEBHOOK_TOKEN: webhookToken,
-//   INPUT_COMMIT_MESSAGE: commitMessage
-// } = process.env
+const { INPUT_SLACK_NOTIFY_EVENT: eventType, INPUT_GITHUB_RUN_ID: runId, INPUT_WEBHOOK_TOKEN: webhookToken, INPUT_COMMIT_MESSAGE: commitMessage } = process.env;
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const octokit = new github.GitHub(GITHUB_TOKEN);
-// const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`
-// const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`
-// const commit =
-//   commitMessage!.trim().length > 0
-//     ? `\n*${commitMessage!.trim().split('\n')[0]}*\n`
-//     : ''
-// // const eventMap: any = {
-// //   DEPLOYMENT_TEST_FAIL: {
-// //     text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
-// //   },
-// //   DEPLOYMENT_PAUSED: {
-// //     text: `⏸️ The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
-// // <${runLink}|See github action> \n
-// // <${masterActionPage}|See all running actions>`
-// //   }
-// // }
+const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
+const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`;
+const commit = commitMessage.trim().length > 0
+    ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
+    : '';
+const eventMap = {
+    DEPLOYMENT_TEST_FAIL: {
+        text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
+    },
+    DEPLOYMENT_PAUSED: {
+        text: `⏸️ The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
+<${runLink}|See github action> \n
+<${masterActionPage}|See all running actions>`
+    }
+};
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        // const service = 'https://hooks.slack.com/services/'
-        // const post = await bent(service, "POST", "json", 200);
-        // const payload = eventMap[eventType!]
+        const service = 'https://hooks.slack.com/services/';
+        const post = yield bent(service, "POST", "json", 200);
+        const payload = eventMap[eventType];
         try {
             console.log({ owner, repo, GITHUB_RUN_ID });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
@@ -2064,9 +2212,10 @@ function run() {
                 acc[job.name] = job.conclusion === 'success';
                 return acc;
             }, {});
-            console.log({ jobs });
+            // uncomment for debugging
+            // console.log({jobs})
             console.log({ jobStatuses });
-            // await post(webhookToken, payload);
+            yield post(webhookToken, payload);
         }
         catch (error) {
             console.error(error);
@@ -2090,6 +2239,191 @@ module.exports = require("https");
 /***/ (function(module) {
 
 module.exports = {"name":"@octokit/rest","version":"16.43.1","publishConfig":{"access":"public"},"description":"GitHub REST API client for Node.js","keywords":["octokit","github","rest","api-client"],"author":"Gregor Martynus (https://github.com/gr2m)","contributors":[{"name":"Mike de Boer","email":"info@mikedeboer.nl"},{"name":"Fabian Jakobs","email":"fabian@c9.io"},{"name":"Joe Gallo","email":"joe@brassafrax.com"},{"name":"Gregor Martynus","url":"https://github.com/gr2m"}],"repository":"https://github.com/octokit/rest.js","dependencies":{"@octokit/auth-token":"^2.4.0","@octokit/plugin-paginate-rest":"^1.1.1","@octokit/plugin-request-log":"^1.0.0","@octokit/plugin-rest-endpoint-methods":"2.4.0","@octokit/request":"^5.2.0","@octokit/request-error":"^1.0.2","atob-lite":"^2.0.0","before-after-hook":"^2.0.0","btoa-lite":"^1.0.0","deprecation":"^2.0.0","lodash.get":"^4.4.2","lodash.set":"^4.3.2","lodash.uniq":"^4.5.0","octokit-pagination-methods":"^1.1.0","once":"^1.4.0","universal-user-agent":"^4.0.0"},"devDependencies":{"@gimenete/type-writer":"^0.1.3","@octokit/auth":"^1.1.1","@octokit/fixtures-server":"^5.0.6","@octokit/graphql":"^4.2.0","@types/node":"^13.1.0","bundlesize":"^0.18.0","chai":"^4.1.2","compression-webpack-plugin":"^3.1.0","cypress":"^3.0.0","glob":"^7.1.2","http-proxy-agent":"^4.0.0","lodash.camelcase":"^4.3.0","lodash.merge":"^4.6.1","lodash.upperfirst":"^4.3.1","lolex":"^5.1.2","mkdirp":"^1.0.0","mocha":"^7.0.1","mustache":"^4.0.0","nock":"^11.3.3","npm-run-all":"^4.1.2","nyc":"^15.0.0","prettier":"^1.14.2","proxy":"^1.0.0","semantic-release":"^17.0.0","sinon":"^8.0.0","sinon-chai":"^3.0.0","sort-keys":"^4.0.0","string-to-arraybuffer":"^1.0.0","string-to-jsdoc-comment":"^1.0.0","typescript":"^3.3.1","webpack":"^4.0.0","webpack-bundle-analyzer":"^3.0.0","webpack-cli":"^3.0.0"},"types":"index.d.ts","scripts":{"coverage":"nyc report --reporter=html && open coverage/index.html","lint":"prettier --check '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","lint:fix":"prettier --write '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","pretest":"npm run -s lint","test":"nyc mocha test/mocha-node-setup.js \"test/*/**/*-test.js\"","test:browser":"cypress run --browser chrome","build":"npm-run-all build:*","build:ts":"npm run -s update-endpoints:typescript","prebuild:browser":"mkdirp dist/","build:browser":"npm-run-all build:browser:*","build:browser:development":"webpack --mode development --entry . --output-library=Octokit --output=./dist/octokit-rest.js --profile --json > dist/bundle-stats.json","build:browser:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=Octokit --output-path=./dist --output-filename=octokit-rest.min.js --devtool source-map","generate-bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","update-endpoints":"npm-run-all update-endpoints:*","update-endpoints:fetch-json":"node scripts/update-endpoints/fetch-json","update-endpoints:typescript":"node scripts/update-endpoints/typescript","prevalidate:ts":"npm run -s build:ts","validate:ts":"tsc --target es6 --noImplicitAny index.d.ts","postvalidate:ts":"tsc --noEmit --target es6 test/typescript-validate.ts","start-fixtures-server":"octokit-fixtures-server"},"license":"MIT","files":["index.js","index.d.ts","lib","plugins"],"nyc":{"ignore":["test"]},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"bundlesize":[{"path":"./dist/octokit-rest.min.js.gz","maxSize":"33 kB"}]};
+
+/***/ }),
+
+/***/ 231:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const http = __webpack_require__(605)
+const https = __webpack_require__(211)
+const { URL } = __webpack_require__(835)
+const isStream = __webpack_require__(323)
+const caseless = __webpack_require__(972)
+const bytes = __webpack_require__(414)
+const bent = __webpack_require__(717)
+const zlib = __webpack_require__(761)
+const { PassThrough } = __webpack_require__(413)
+
+const compression = {}
+
+/* istanbul ignore else */
+if (zlib.createBrotliDecompress) compression.br = () => zlib.createBrotliDecompress()
+/* istanbul ignore else */
+if (zlib.createGunzip) compression.gzip = () => zlib.createGunzip()
+/* istanbul ignore else */
+if (zlib.createInflate) compression.deflate = () => zlib.createInflate()
+
+const acceptEncoding = Object.keys(compression).join(', ')
+
+const getResponse = resp => {
+  const ret = new PassThrough()
+  ret.statusCode = resp.statusCode
+  ret.status = resp.statusCode
+  ret.statusMessage = resp.statusMessage
+  ret.headers = resp.headers
+  ret._response = resp
+  if (ret.headers['content-encoding']) {
+    const encodings = ret.headers['content-encoding'].split(', ').reverse()
+    while (encodings.length) {
+      const enc = encodings.shift()
+      if (compression[enc]) {
+        const decompress = compression[enc]()
+        decompress.on('error', (e) => ret.emit('error', new Error('ZBufError', e)))
+        resp = resp.pipe(decompress)
+      } else {
+        break
+      }
+    }
+  }
+  return resp.pipe(ret)
+}
+
+class StatusError extends Error {
+  constructor (res, ...params) {
+    super(...params)
+
+    Error.captureStackTrace(this, StatusError)
+    this.message = `Incorrect statusCode: ${res.statusCode}`
+    this.statusCode = res.statusCode
+    this.json = res.json
+    this.text = res.text
+    this.arrayBuffer = res.arrayBuffer
+    this.headers = res.headers
+    let buffer
+    const get = () => {
+      if (!buffer) buffer = this.arrayBuffer()
+      return buffer
+    }
+    Object.defineProperty(this, 'responseBody', { get })
+  }
+}
+
+const getBuffer = stream => new Promise((resolve, reject) => {
+  const parts = []
+  stream.on('error', reject)
+  stream.on('end', () => resolve(Buffer.concat(parts)))
+  stream.on('data', d => parts.push(d))
+})
+
+const decodings = res => {
+  let _buffer
+  res.arrayBuffer = () => {
+    if (!_buffer) {
+      _buffer = getBuffer(res)
+      return _buffer
+    } else {
+      throw new Error('body stream is locked')
+    }
+  }
+  res.text = () => res.arrayBuffer().then(buff => buff.toString())
+  res.json = async () => {
+    const str = await res.text()
+    try {
+      return JSON.parse(str)
+    } catch (e) {
+      e.message += `str"${str}"`
+      throw e
+    }
+  }
+}
+
+const mkrequest = (statusCodes, method, encoding, headers, baseurl) => (_url, body = null, _headers = {}) => {
+  _url = baseurl + (_url || '')
+  const parsed = new URL(_url)
+  let h
+  if (parsed.protocol === 'https:') {
+    h = https
+  } else if (parsed.protocol === 'http:') {
+    h = http
+  } else {
+    throw new Error(`Unknown protocol, ${parsed.protocol}`)
+  }
+  const request = {
+    path: parsed.pathname + parsed.search,
+    port: parsed.port,
+    method: method,
+    headers: { ...(headers || {}), ..._headers },
+    hostname: parsed.hostname
+  }
+  if (parsed.username || parsed.password) {
+    request.auth = [parsed.username, parsed.password].join(':')
+  }
+  const c = caseless(request.headers)
+  if (encoding === 'json') {
+    if (!c.get('accept')) {
+      c.set('accept', 'application/json')
+    }
+  }
+  if (!c.has('accept-encoding')) {
+    c.set('accept-encoding', acceptEncoding)
+  }
+  return new Promise((resolve, reject) => {
+    const req = h.request(request, async res => {
+      res = getResponse(res)
+      res.on('error', reject)
+      decodings(res)
+      res.status = res.statusCode
+      if (!statusCodes.has(res.statusCode)) {
+        return reject(new StatusError(res))
+      }
+
+      if (!encoding) return resolve(res)
+      else {
+        /* istanbul ignore else */
+        if (encoding === 'buffer') {
+          resolve(res.arrayBuffer())
+        } else if (encoding === 'json') {
+          resolve(res.json())
+        } else if (encoding === 'string') {
+          resolve(res.text())
+        }
+      }
+    })
+    req.on('error', reject)
+    if (body) {
+      if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+        body = bytes.native(body)
+      }
+      if (Buffer.isBuffer(body)) {
+        // noop
+      } else if (typeof body === 'string') {
+        body = Buffer.from(body)
+      } else if (isStream(body)) {
+        body.pipe(req)
+        body = null
+      } else if (typeof body === 'object') {
+        if (!c.has('content-type')) {
+          req.setHeader('content-type', 'application/json')
+        }
+        body = Buffer.from(JSON.stringify(body))
+      } else {
+        reject(new Error('Unknown body type.'))
+      }
+      if (body) {
+        req.setHeader('content-length', body.length)
+        req.end(body)
+      }
+    } else {
+      req.end()
+    }
+  })
+}
+
+module.exports = bent(mkrequest)
+
 
 /***/ }),
 
@@ -4210,6 +4544,43 @@ exports.paginateRest = paginateRest;
 
 /***/ }),
 
+/***/ 323:
+/***/ (function(module) {
+
+"use strict";
+
+
+const isStream = stream =>
+	stream !== null &&
+	typeof stream === 'object' &&
+	typeof stream.pipe === 'function';
+
+isStream.writable = stream =>
+	isStream(stream) &&
+	stream.writable !== false &&
+	typeof stream._write === 'function' &&
+	typeof stream._writableState === 'object';
+
+isStream.readable = stream =>
+	isStream(stream) &&
+	stream.readable !== false &&
+	typeof stream._read === 'function' &&
+	typeof stream._readableState === 'object';
+
+isStream.duplex = stream =>
+	isStream.writable(stream) &&
+	isStream.readable(stream);
+
+isStream.transform = stream =>
+	isStream.duplex(stream) &&
+	typeof stream._transform === 'function' &&
+	typeof stream._transformState === 'object';
+
+module.exports = isStream;
+
+
+/***/ }),
+
 /***/ 336:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -4985,6 +5356,51 @@ function Octokit(plugins, options) {
 /***/ (function(module) {
 
 module.exports = require("stream");
+
+/***/ }),
+
+/***/ 414:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const crypto = __webpack_require__(417)
+const fallback = __webpack_require__(58).from
+const bytes = __webpack_require__(101)
+
+bytes.from = (_from, encoding) => {
+  if (_from instanceof DataView) return _from
+  if (_from instanceof ArrayBuffer) return new DataView(_from)
+  if (typeof _from === 'string') {
+    _from = Buffer.from(_from, encoding)
+  }
+  if (Buffer.isBuffer(_from)) {
+    return new DataView(_from.buffer, _from.byteOffset, _from.byteLength)
+  }
+  return fallback(_from, encoding)
+}
+bytes.toString = (_from, encoding) => {
+  _from = bytes(_from)
+  return Buffer.from(_from.buffer, _from.byteOffset, _from.byteLength).toString(encoding)
+}
+
+bytes.native = (_from, encoding) => {
+  if (Buffer.isBuffer(_from)) return _from
+  _from = bytes(_from, encoding)
+  return Buffer.from(_from.buffer, _from.byteOffset, _from.byteLength)
+}
+
+bytes._randomFill = crypto.randomFillSync
+
+module.exports = bytes
+
+
+/***/ }),
+
+/***/ 417:
+/***/ (function(module) {
+
+module.exports = require("crypto");
 
 /***/ }),
 
@@ -8638,6 +9054,61 @@ module.exports = (promise, onFinally) => {
 		})
 	);
 };
+
+
+/***/ }),
+
+/***/ 717:
+/***/ (function(module) {
+
+"use strict";
+
+const encodings = new Set(['json', 'buffer', 'string'])
+
+module.exports = mkrequest => (...args) => {
+  const statusCodes = new Set()
+  let method
+  let encoding
+  let headers
+  let baseurl = ''
+
+  args.forEach(arg => {
+    if (typeof arg === 'string') {
+      if (arg.toUpperCase() === arg) {
+        if (method) {
+          const msg = `Can't set method to ${arg}, already set to ${method}.`
+          throw new Error(msg)
+        } else {
+          method = arg
+        }
+      } else if (arg.startsWith('http:') || arg.startsWith('https:')) {
+        baseurl = arg
+      } else {
+        if (encodings.has(arg)) {
+          encoding = arg
+        } else {
+          throw new Error(`Unknown encoding, ${arg}`)
+        }
+      }
+    } else if (typeof arg === 'number') {
+      statusCodes.add(arg)
+    } else if (typeof arg === 'object') {
+      if (headers) {
+        throw new Error('Cannot set headers twice.')
+      }
+      headers = arg
+    } else {
+      throw new Error(`Unknown type: ${typeof arg}`)
+    }
+  })
+
+  if (!method) method = 'GET'
+  if (statusCodes.size === 0) {
+    statusCodes.add(200)
+  }
+
+  return mkrequest(statusCodes, method, encoding, headers, baseurl)
+}
 
 
 /***/ }),
@@ -25299,6 +25770,80 @@ function onceStrict (fn) {
   f.onceError = name + " shouldn't be called more than once"
   f.called = false
   return f
+}
+
+
+/***/ }),
+
+/***/ 972:
+/***/ (function(module) {
+
+function Caseless (dict) {
+  this.dict = dict || {}
+}
+Caseless.prototype.set = function (name, value, clobber) {
+  if (typeof name === 'object') {
+    for (var i in name) {
+      this.set(i, name[i], value)
+    }
+  } else {
+    if (typeof clobber === 'undefined') clobber = true
+    var has = this.has(name)
+
+    if (!clobber && has) this.dict[has] = this.dict[has] + ',' + value
+    else this.dict[has || name] = value
+    return has
+  }
+}
+Caseless.prototype.has = function (name) {
+  var keys = Object.keys(this.dict)
+    , name = name.toLowerCase()
+    ;
+  for (var i=0;i<keys.length;i++) {
+    if (keys[i].toLowerCase() === name) return keys[i]
+  }
+  return false
+}
+Caseless.prototype.get = function (name) {
+  name = name.toLowerCase()
+  var result, _key
+  var headers = this.dict
+  Object.keys(headers).forEach(function (key) {
+    _key = key.toLowerCase()
+    if (name === _key) result = headers[key]
+  })
+  return result
+}
+Caseless.prototype.swap = function (name) {
+  var has = this.has(name)
+  if (has === name) return
+  if (!has) throw new Error('There is no header than matches "'+name+'"')
+  this.dict[name] = this.dict[has]
+  delete this.dict[has]
+}
+Caseless.prototype.del = function (name) {
+  var has = this.has(name)
+  return delete this.dict[has || name]
+}
+
+module.exports = function (dict) {return new Caseless(dict)}
+module.exports.httpify = function (resp, headers) {
+  var c = new Caseless(headers)
+  resp.setHeader = function (key, value, clobber) {
+    if (typeof value === 'undefined') return
+    return c.set(key, value, clobber)
+  }
+  resp.hasHeader = function (key) {
+    return c.has(key)
+  }
+  resp.getHeader = function (key) {
+    return c.get(key)
+  }
+  resp.removeHeader = function (key) {
+    return c.del(key)
+  }
+  resp.headers = c.dict
+  return c
 }
 
 
