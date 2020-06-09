@@ -2013,15 +2013,40 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const github = __importStar(__webpack_require__(469));
 const core = __importStar(__webpack_require__(470));
+// import bent from 'bent'
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID);
+// const {
+//   INPUT_SLACK_NOTIFY_EVENT: eventType,
+//   INPUT_GITHUB_RUN_ID: runId,
+//   INPUT_WEBHOOK_TOKEN: webhookToken,
+//   INPUT_COMMIT_MESSAGE: commitMessage
+// } = process.env
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
-const jobName = core.getInput('jobName');
 const octokit = new github.GitHub(GITHUB_TOKEN);
+// const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`
+// const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`
+// const commit =
+//   commitMessage!.trim().length > 0
+//     ? `\n*${commitMessage!.trim().split('\n')[0]}*\n`
+//     : ''
+// // const eventMap: any = {
+// //   DEPLOYMENT_TEST_FAIL: {
+// //     text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
+// //   },
+// //   DEPLOYMENT_PAUSED: {
+// //     text: `⏸️ The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
+// // <${runLink}|See github action> \n
+// // <${masterActionPage}|See all running actions>`
+// //   }
+// // }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        // const service = 'https://hooks.slack.com/services/'
+        // const post = await bent(service, "POST", "json", 200);
+        // const payload = eventMap[eventType!]
         try {
-            console.log({ owner, repo, GITHUB_RUN_ID, jobName });
+            console.log({ owner, repo, GITHUB_RUN_ID });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
                 owner,
                 repo,
@@ -2031,29 +2056,17 @@ function run() {
                 // see: https://github.blog/changelog/2020-03-09-new-filter-parameter-in-workflow-jobs-api/
                 filter: 'all'
             })).data.jobs;
-            const filteredJobs = jobs
-                .filter(job => job.name === jobName)
-                .filter(job => job.status === 'completed')
-                // Sort by started_at in descending order. Latest first.
-                .sort((jobA, jobB) => {
-                const timestampA = new Date(jobA.started_at).getTime();
-                const timestampB = new Date(jobB.started_at).getTime();
-                if (timestampA > timestampB) {
-                    return -1;
+            const filteredJobs = jobs.filter(job => job.status === 'completed');
+            const jobStatuses = filteredJobs.reduce((acc, job) => {
+                if (acc[job.name] === true) {
+                    return acc;
                 }
-                if (timestampA < timestampB) {
-                    return 1;
-                }
-                return 0;
-            });
+                acc[job.name] = job.conclusion === 'success';
+                return acc;
+            }, {});
             console.log({ jobs });
-            console.log({ filteredJobs });
-            const matchingJob = filteredJobs[0];
-            console.log({ matchingJob });
-            if (matchingJob == null) {
-                return core.setOutput('conclusion', 'pending');
-            }
-            return core.setOutput('conclusion', matchingJob.conclusion);
+            console.log({ jobStatuses });
+            // await post(webhookToken, payload);
         }
         catch (error) {
             console.error(error);
@@ -3832,6 +3845,35 @@ function coerce (version) {
 
 /***/ }),
 
+/***/ 282:
+/***/ (function(module) {
+
+"use strict";
+
+
+var isStream = module.exports = function (stream) {
+	return stream !== null && typeof stream === 'object' && typeof stream.pipe === 'function';
+};
+
+isStream.writable = function (stream) {
+	return isStream(stream) && stream.writable !== false && typeof stream._write === 'function' && typeof stream._writableState === 'object';
+};
+
+isStream.readable = function (stream) {
+	return isStream(stream) && stream.readable !== false && typeof stream._read === 'function' && typeof stream._readableState === 'object';
+};
+
+isStream.duplex = function (stream) {
+	return isStream.writable(stream) && isStream.readable(stream);
+};
+
+isStream.transform = function (stream) {
+	return isStream.duplex(stream) && typeof stream._transform === 'function' && typeof stream._transformState === 'object';
+};
+
+
+/***/ }),
+
 /***/ 293:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -4164,35 +4206,6 @@ paginateRest.VERSION = VERSION;
 
 exports.paginateRest = paginateRest;
 //# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 323:
-/***/ (function(module) {
-
-"use strict";
-
-
-var isStream = module.exports = function (stream) {
-	return stream !== null && typeof stream === 'object' && typeof stream.pipe === 'function';
-};
-
-isStream.writable = function (stream) {
-	return isStream(stream) && stream.writable !== false && typeof stream._write === 'function' && typeof stream._writableState === 'object';
-};
-
-isStream.readable = function (stream) {
-	return isStream(stream) && stream.readable !== false && typeof stream._read === 'function' && typeof stream._readableState === 'object';
-};
-
-isStream.duplex = function (stream) {
-	return isStream.writable(stream) && isStream.readable(stream);
-};
-
-isStream.transform = function (stream) {
-	return isStream.duplex(stream) && typeof stream._transform === 'function' && typeof stream._transformState === 'object';
-};
 
 
 /***/ }),
@@ -24824,7 +24837,7 @@ const childProcess = __webpack_require__(129);
 const crossSpawn = __webpack_require__(20);
 const stripEof = __webpack_require__(768);
 const npmRunPath = __webpack_require__(621);
-const isStream = __webpack_require__(323);
+const isStream = __webpack_require__(282);
 const _getStream = __webpack_require__(145);
 const pFinally = __webpack_require__(697);
 const onExit = __webpack_require__(260);
