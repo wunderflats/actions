@@ -1,0 +1,23 @@
+name: 'slack-check-runs-notify'
+description: 'Check if there is a job that has failed for this commit and report it to Slack'
+author: 'Wunderflats GmbH'
+inputs:
+  GITHUB_RUN_ID:
+    description: "GITHUB_RUN_ID"
+    required: true
+  SLACK_NOTIFY_EVENT:
+    description: "SLACK_NOTIFY_EVENT"
+    required: true
+  COMMIT_MESSAGE:
+    description: "COMMIT_MESSAGE"
+    required: false
+    default: ""
+  WEBHOOK_TOKEN:
+    description: "WEBHOOK_TOKEN"
+    required: true
+outputs:
+  conclusion:
+    description: "Conclusion of the job in the last workflow run for the same commit."
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
