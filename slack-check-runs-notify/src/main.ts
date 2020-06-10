@@ -8,7 +8,6 @@ const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID!)
 
 const {
-  INPUT_SLACK_NOTIFY_EVENT: eventType,
   INPUT_GITHUB_RUN_ID: runId,
   INPUT_WEBHOOK_TOKEN: webhookToken,
   INPUT_COMMIT_MESSAGE: commitMessage
@@ -25,21 +24,15 @@ const commit =
     ? `\n*${commitMessage!.trim().split('\n')[0]}*\n`
     : ''
 
-const eventMap: any = {
-  DEPLOYMENT_TEST_FAIL: {
+const deploymentTestFail = {
     text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
-  },
-  DEPLOYMENT_PAUSED: {
-    text: `⏸️ The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
-<${runLink}|See github action> \n
-<${masterActionPage}|See all running actions>`
-  }
-}
+  };
+
 
 async function run(): Promise<void> {
   const service = 'https://hooks.slack.com/services/'
   const post = await bent(service, "POST", "json", 200);
-  const payload = eventMap[eventType!]
+
   try {
     console.log({owner, repo, GITHUB_RUN_ID})
 
@@ -73,7 +66,14 @@ async function run(): Promise<void> {
     // console.log({jobs})
     console.log({jobStatuses})
 
-    await post(webhookToken, payload);
+    const atLeastOneJobFailed = Object.values(jobStatuses).some(jobSucceded => jobSucceded === false)
+
+    console.log({atLeastOneJobFailed})
+
+    if (atLeastOneJobFailed) {
+      await post(webhookToken, deploymentTestFail);
+    }
+
   } catch (error) {
     console.error(error)
     core.setFailed(error.message)

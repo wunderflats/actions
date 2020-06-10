@@ -2170,7 +2170,7 @@ const core = __importStar(__webpack_require__(470));
 const bent = __webpack_require__(231);
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/', 2);
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID);
-const { INPUT_SLACK_NOTIFY_EVENT: eventType, INPUT_GITHUB_RUN_ID: runId, INPUT_WEBHOOK_TOKEN: webhookToken, INPUT_COMMIT_MESSAGE: commitMessage } = process.env;
+const { INPUT_GITHUB_RUN_ID: runId, INPUT_WEBHOOK_TOKEN: webhookToken, INPUT_COMMIT_MESSAGE: commitMessage } = process.env;
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const octokit = new github.GitHub(GITHUB_TOKEN);
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
@@ -2178,21 +2178,13 @@ const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=bran
 const commit = commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : '';
-const eventMap = {
-    DEPLOYMENT_TEST_FAIL: {
-        text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
-    },
-    DEPLOYMENT_PAUSED: {
-        text: `⏸️ The deployment for master ${commit}has been paused because of another running deployment. Please resume it when the first deployment is green.
-<${runLink}|See github action> \n
-<${masterActionPage}|See all running actions>`
-    }
+const deploymentTestFail = {
+    text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const service = 'https://hooks.slack.com/services/';
         const post = yield bent(service, "POST", "json", 200);
-        const payload = eventMap[eventType];
         try {
             console.log({ owner, repo, GITHUB_RUN_ID });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
@@ -2215,7 +2207,11 @@ function run() {
             // uncomment for debugging
             // console.log({jobs})
             console.log({ jobStatuses });
-            yield post(webhookToken, payload);
+            const atLeastOneJobFailed = Object.values(jobStatuses).some(jobSucceded => jobSucceded === false);
+            console.log({ atLeastOneJobFailed });
+            if (atLeastOneJobFailed) {
+                yield post(webhookToken, deploymentTestFail);
+            }
         }
         catch (error) {
             console.error(error);
