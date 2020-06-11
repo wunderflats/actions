@@ -2174,7 +2174,6 @@ const { INPUT_GITHUB_RUN_ID: runId, INPUT_WEBHOOK_TOKEN: webhookToken, INPUT_COM
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const octokit = new github.GitHub(GITHUB_TOKEN);
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
-const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`;
 const commit = commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : '';
@@ -2184,7 +2183,7 @@ const deploymentTestFail = {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const service = 'https://hooks.slack.com/services/';
-        const post = yield bent(service, "POST", "json", 200);
+        const post = yield bent(service, 'POST', 'json', 200);
         try {
             console.log({ owner, repo, GITHUB_RUN_ID });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({

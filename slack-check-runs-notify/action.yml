@@ -12,9 +12,6 @@ inputs:
   WEBHOOK_TOKEN:
     description: "WEBHOOK_TOKEN"
     required: true
-outputs:
-  conclusion:
-    description: "Conclusion of the job in the last workflow run for the same commit."
 runs:
   using: 'node12'
   main: 'dist/index.js'

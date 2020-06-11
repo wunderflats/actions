@@ -18,20 +18,18 @@ const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
 const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
 
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`
-const masterActionPage = `https://github.com/${owner}/${repo}/actions?query=branch%3Amaster`
 const commit =
   commitMessage!.trim().length > 0
     ? `\n*${commitMessage!.trim().split('\n')[0]}*\n`
     : ''
 
 const deploymentTestFail = {
-    text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
-  };
-
+  text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
+}
 
 async function run(): Promise<void> {
   const service = 'https://hooks.slack.com/services/'
-  const post = await bent(service, "POST", "json", 200);
+  const post = await bent(service, 'POST', 'json', 200)
 
   try {
     console.log({owner, repo, GITHUB_RUN_ID})
@@ -66,14 +64,15 @@ async function run(): Promise<void> {
     // console.log({jobs})
     console.log({jobStatuses})
 
-    const atLeastOneJobFailed = Object.values(jobStatuses).some(jobSucceded => jobSucceded === false)
+    const atLeastOneJobFailed = Object.values(jobStatuses).some(
+      jobSucceded => jobSucceded === false
+    )
 
     console.log({atLeastOneJobFailed})
 
     if (atLeastOneJobFailed) {
-      await post(webhookToken, deploymentTestFail);
+      await post(webhookToken, deploymentTestFail)
     }
-
   } catch (error) {
     console.error(error)
     core.setFailed(error.message)
