@@ -7,12 +7,8 @@ const bent = require('bent')
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID!)
 
-const {
-  INPUT_GITHUB_RUN_ID: runId,
-  INPUT_WEBHOOK_TOKEN: webhookToken,
-  INPUT_COMMIT_MESSAGE: commitMessage
-} = process.env
-
+const webhookToken = core.getInput('WEBHOOK_TOKEN')
+const commitMessage = core.getInput('COMMIT_MESSAGE')
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
 
 const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
