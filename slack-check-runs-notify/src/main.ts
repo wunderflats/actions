@@ -1,4 +1,3 @@
-import {Octokit} from '@octokit/rest'
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 
@@ -11,12 +10,12 @@ const webhookToken = core.getInput('WEBHOOK_TOKEN')
 const commitMessage = core.getInput('COMMIT_MESSAGE')
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
 
-const octokit: Octokit = (new github.GitHub(GITHUB_TOKEN) as any) as Octokit
+const octokit = github.getOctokit(GITHUB_TOKEN)
 
-const runLink = `https://github.com/${owner}/${repo}/actions/runs/${runId}`
+const runLink = `https://github.com/${owner}/${repo}/actions/runs/${GITHUB_RUN_ID}`
 const commit =
-  commitMessage!.trim().length > 0
-    ? `\n*${commitMessage!.trim().split('\n')[0]}*\n`
+  commitMessage.trim().length > 0
+    ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : ''
 
 const deploymentTestFail = {
@@ -36,10 +35,8 @@ async function run(): Promise<void> {
         repo,
         run_id: GITHUB_RUN_ID,
         per_page: 100,
-        // API change require this new parameter which is not yet in oktokit
-        // see: https://github.blog/changelog/2020-03-09-new-filter-parameter-in-workflow-jobs-api/
         filter: 'all'
-      } as any)
+      })
     ).data.jobs
     const filteredJobs = jobs.filter(job => job.status === 'completed')
 
