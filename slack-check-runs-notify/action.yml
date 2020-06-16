@@ -12,9 +12,13 @@ inputs:
   WEBHOOK_TOKEN:
     description: "WEBHOOK_TOKEN"
     required: true
-    GITHUB_TOKEN:
+  GITHUB_TOKEN:
     description: "GITHUB_TOKEN"
     required: true
+  FAILED_MESSAGE:
+    description: "FAILED_MESSAGE"
+    required: false
+    default: ""
 runs:
   using: 'node12'
   main: 'dist/index.js'
