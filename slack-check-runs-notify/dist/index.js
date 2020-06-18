@@ -1475,13 +1475,16 @@ const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID);
 const webhookToken = core.getInput('WEBHOOK_TOKEN');
 const commitMessage = core.getInput('COMMIT_MESSAGE');
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
+const FAILED_MESSAGE = core.getInput('FAILED_MESSAGE');
 const octokit = github.getOctokit(GITHUB_TOKEN);
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${GITHUB_RUN_ID}`;
 const commit = commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : '';
+console.log({ FAILED_MESSAGE });
 const deploymentTestFail = {
-    text: `❌ A test check failed preventing deployment on master ${commit}<${runLink}|See github action>`
+    text: FAILED_MESSAGE ||
+        `❌ A check failed for commit ${commit}<${runLink}|See github action>`
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {

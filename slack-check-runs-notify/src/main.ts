@@ -18,7 +18,7 @@ const commit =
   commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : ''
-
+console.log({FAILED_MESSAGE})
 const deploymentTestFail = {
   text:
     FAILED_MESSAGE ||
