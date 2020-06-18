@@ -18,7 +18,7 @@ const commit =
   commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : ''
-console.log({FAILED_MESSAGE})
+// console.log({FAILED_MESSAGE})
 const deploymentTestFail = {
   text:
     FAILED_MESSAGE ||
@@ -27,7 +27,7 @@ const deploymentTestFail = {
 
 async function run(): Promise<void> {
   const service = 'https://hooks.slack.com/services/'
-  const post = await bent(service, 'POST', 'json', 200)
+  const post = await bent(service, 'POST', 'string', 200)
 
   try {
     console.log({owner, repo, GITHUB_RUN_ID})

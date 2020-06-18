@@ -1481,7 +1481,7 @@ const runLink = `https://github.com/${owner}/${repo}/actions/runs/${GITHUB_RUN_I
 const commit = commitMessage.trim().length > 0
     ? `\n*${commitMessage.trim().split('\n')[0]}*\n`
     : '';
-console.log({ FAILED_MESSAGE });
+// console.log({FAILED_MESSAGE})
 const deploymentTestFail = {
     text: FAILED_MESSAGE ||
         `❌ A check failed for commit ${commit}<${runLink}|See github action>`
@@ -1489,7 +1489,7 @@ const deploymentTestFail = {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const service = 'https://hooks.slack.com/services/';
-        const post = yield bent(service, 'POST', 'json', 200);
+        const post = yield bent(service, 'POST', 'string', 200);
         try {
             console.log({ owner, repo, GITHUB_RUN_ID });
             const jobs = (yield octokit.actions.listJobsForWorkflowRun({
