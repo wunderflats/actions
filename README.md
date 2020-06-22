@@ -81,6 +81,43 @@ jobs:
           WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
 
+## slack-check-runs-notify
+
+A github action that sends a message to slack if one of the jobs failed
+
+#### Example:
+
+```
+jobs:
+  some-job:
+    name: Do Something
+    steps:
+      - id: main task
+        run: echo do the task
+  some-other-job
+    name: Also doing something
+    steps:
+      - id: other task
+        run: echo do the task
+  notify:
+    name: notify
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    needs:
+      - some-job
+      - some-other-job
+    steps:
+      - name: notifying
+        uses: wunderflats/actions/slack-check-runs-notify@master
+        with:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEBHOOK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+```
+
+---
+
 ---
 
 ## License: Apache-2.0
