@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { random } = require("lodash");
+const { random, difference } = require("lodash");
 
 /**
  * Fetch and transform inputs into usable variables
@@ -85,12 +85,24 @@ async function pickUsers(userList, pickAmount, removeBusy, prOwner, octokit) {
   return pickedUsers;
 }
 
+// This allow to have maintainers in the reviewer list. If they are already picked, we can make
+// a reviewerList without them
+function excludePickedMaintainer(userList, pickedMaintainers){
+  return difference(userList, pickedMaintainers);
+}
+
 /**
  * Main action entry point
  **/
 async function run() {
   //Get action events
   const actionEvents = require(process.env.GITHUB_EVENT_PATH);
+
+  const isDraft = actionEvents.pull_request.draft;
+  if(isDraft === true){
+    core.info("Ignoring Draft PR");
+    return;
+  }
 
   const {
     reviewerList,
@@ -129,15 +141,6 @@ async function run() {
   if (users.length === 0 && teams.length === 0) {
     core.info("Reviewers needed, picking reviewers.");
 
-    // Reviewers:
-    const reviewers = await pickUsers(
-      reviewerList,
-      reviewerAmount,
-      skipBusy,
-      prOwner.login,
-      octokit
-    );
-
     // Maintainers:
     const maintainers = await pickUsers(
       maintainerList,
@@ -146,6 +149,16 @@ async function run() {
       prOwner.login,
       octokit
     );
+
+    // Reviewers:
+    const reviewers = await pickUsers(
+      excludePickedMaintainer(reviewerList, maintainers),
+      reviewerAmount,
+      skipBusy,
+      prOwner.login,
+      octokit,
+    );
+
 
     core.info(
       `Assigning ${[...reviewers, ...maintainers].join(", ")} to code review`
