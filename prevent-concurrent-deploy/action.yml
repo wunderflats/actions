@@ -5,6 +5,9 @@ inputs:
   GITHUB_TOKEN:
     description: "A valid token for listing workflows"
     required: true
+  SKIP_QUEUED_ACTIONS:
+    description: "Ignore queued actions (default false)"
+    required: false
 runs:
   using: "node12"
   main: "main.js"
