@@ -15,6 +15,7 @@ const commit_hash = process.env.GITHUB_HEAD_REF
   : process.env.GITHUB_SHA;
 
 const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
+const SKIP_QUEUED_ACTIONS = core.getInput("SKIP_QUEUED_ACTIONS");
 
 async function run() {
   const octokit = new github.GitHub(GITHUB_TOKEN);
@@ -25,20 +26,29 @@ async function run() {
       owner,
       repo,
       branch,
-      per_page: 100
+      per_page: 100,
     })
   ).data;
 
   // If we have workflows on the same branch but different commit (and still active)
   // Set current workflow to failed (so it can be re-run)
   if (
-    workflow_runs.some(
-      workflow =>
-        workflow.head_sha !== commit_hash && workflow.status !== "completed"
-    )
+    workflow_runs.some((workflow) => {
+      if (SKIP_QUEUED_ACTIONS !== "true") {
+        return (
+          workflow.head_sha !== commit_hash && workflow.status !== "completed"
+        );
+      } else {
+        return (
+          workflow.head_sha !== commit_hash &&
+          workflow.status !== "completed" &&
+          workflow.status !== "queued"
+        );
+      }
+    })
   ) {
     core.setFailed("Another deployment is currently running, aborting");
   }
 }
 
-run().catch(error => core.setFailed(error.message));
+run().catch((error) => core.setFailed(error.message));
