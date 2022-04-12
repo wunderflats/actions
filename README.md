@@ -36,27 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## get-last-run-conclusion
-
-A github action that returns the conclusion of on job's last completed run for the same workflow. It basically allows to skip jobs that succeded for the same workflow run if it's rerun.
-
-#### Example:
-
-```
-jobs:
-  some-job:
-    name: Do Something
-    steps:
-      - id: last_run
-        uses: wunderflats/actions/get-last-run-conclusion@master
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          jobName: Do Something
-      - id: main task
-        if: steps.last_run.outputs.conclusion != 'success'
-        run: echo do the task
-```
-
 ---
 
 ## slack-deploy-notify
@@ -80,6 +59,8 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
+
+---
 
 ## slack-check-runs-notify
 
@@ -115,8 +96,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WEBHOOK_TOKEN: ${{ secrets.SLACK_TOKEN }}
 ```
-
----
 
 ---
 
