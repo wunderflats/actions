@@ -19,6 +19,7 @@ function getInputs() {
   const skipBusy = !!core.getInput("skipBusy");
 
   const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
+  const GITHUB_TOKEN_CHECK_USER_STATUS = core.getInput("GITHUB_PAT_NOSCOPE") || GITHUB_TOKEN;
 
   return {
     reviewerList,
@@ -26,7 +27,8 @@ function getInputs() {
     maintainerList,
     maintainerAmount,
     skipBusy,
-    GITHUB_TOKEN
+    GITHUB_TOKEN,
+    GITHUB_TOKEN_CHECK_USER_STATUS
   };
 }
 
@@ -43,10 +45,13 @@ async function isUserBusy(octokit, userHandle) {
         status {
           indicatesLimitedAvailability
         }
+	viewerCanFollow
       }
     }`,
     user: userHandle
   });
+
+  console.info(`user: ${JSON.stringify(user, null, 2)}`);
 
   // If user never changed their status, then status is null
   if (user.status && user.status.indicatesLimitedAvailability) {
@@ -110,7 +115,8 @@ async function run() {
     maintainerList,
     maintainerAmount,
     skipBusy,
-    GITHUB_TOKEN
+    GITHUB_TOKEN,
+    GITHUB_TOKEN_CHECK_USER_STATUS
   } = getInputs();
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/", 2);
@@ -118,6 +124,7 @@ async function run() {
   core.info(`Adding reviewers to pull request #${prNumber}`);
 
   const octokit = new github.GitHub(GITHUB_TOKEN);
+  const octokitUserStatus = new github.GitHub(GITHUB_TOKEN_CHECK_USER_STATUS);
 
   // Get current reviewers info
   const { users, teams } = (
@@ -147,7 +154,7 @@ async function run() {
       maintainerAmount,
       skipBusy,
       prOwner.login,
-      octokit
+      octokitUserStatus
     );
 
     // Reviewers:
@@ -156,7 +163,7 @@ async function run() {
       reviewerAmount,
       skipBusy,
       prOwner.login,
-      octokit,
+      octokitUserStatus,
     );
 
 
