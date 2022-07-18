@@ -49,7 +49,7 @@ async function run(): Promise<void> {
           return acc
         }
 
-        acc[job.name] = job.conclusion === 'success'
+        acc[job.name] = job.conclusion === 'success' || job.conclusion === 'skipped'
 
         return acc
       },
