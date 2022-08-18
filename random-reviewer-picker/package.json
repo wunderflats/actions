@@ -6,7 +6,7 @@
   "author": "Emmanuel Viala <emmanuel.viala@wunderflats.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.9.1",
     "@actions/github": "^2.1.0",
     "lodash": "^4.17.19"
   }
