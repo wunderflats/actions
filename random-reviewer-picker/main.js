@@ -61,6 +61,8 @@ async function isUserBusy(octokit, userHandle) {
  * then randomly pick the requested amount of users
  **/
 async function pickUsers(userList, pickAmount, removeBusy, prOwner, octokit) {
+  if (pickAmount === 0) return
+
   const pickedUsers = [];
   let filteredList = [];
 
@@ -87,7 +89,7 @@ async function pickUsers(userList, pickAmount, removeBusy, prOwner, octokit) {
 
 // This allow to have maintainers in the reviewer list. If they are already picked, we can make
 // a reviewerList without them
-function excludePickedMaintainer(userList, pickedMaintainers){
+function excludePickedMaintainer(userList, pickedMaintainers) {
   return difference(userList, pickedMaintainers);
 }
 
@@ -99,7 +101,7 @@ async function run() {
   const actionEvents = require(process.env.GITHUB_EVENT_PATH);
 
   const isDraft = actionEvents.pull_request.draft;
-  if(isDraft === true){
+  if (isDraft === true) {
     core.info("Ignoring Draft PR");
     return;
   }
@@ -148,8 +150,7 @@ async function run() {
       skipBusy,
       prOwner.login,
       octokit
-    );
-
+    ) || [];
     // Reviewers:
     const reviewers = await pickUsers(
       excludePickedMaintainer(reviewerList, maintainers),
