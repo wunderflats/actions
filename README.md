@@ -99,4 +99,31 @@ jobs:
 
 ---
 
+## upload-to-test-dashboard
+
+A github action that uploads specific files to wunderflats' test dashboard
+
+#### Example:
+
+```
+jobs:
+  some-job:
+    name: Do Something
+    steps:
+      - id: deploy
+        run: return 1
+      - if: (success() || failure()) && steps.last_run.outputs.conclusion != 'success'
+        uses: wunderflats/actions/upload-to-test-dashboard@master
+        with:
+          API_URL: https://test-dashboard.wunderflats.xyz/api/test-result
+          REPOSITORY: my-repo-name
+          BRANCH: my-fantastic-branch
+          TEST_SUITE: jest
+          TEST_FILE_TYPE: jest
+          COMMIT_HASH: ${{ github.sha }}
+          JOB_ID: ${{ github.run_id }}
+          FILES: ./test-reports/*
+          DASHBOARD_PUSH_TOKEN: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
+```
+
 ## License: Apache-2.0
