@@ -1,0 +1,35 @@
+name: "Upload results to the test dashboard"
+description: "Upload specific files to the test dashboard"
+author: "Wunderflats GmbH"
+runs:
+  using: "node16"
+  main: "dist/index.js"
+
+inputs:
+  API_URL:
+    description: "API_URL"
+    required: true
+  REPOSITORY:
+    description: "REPOSITORY"
+    required: true
+  BRANCH:
+    description: "BRANCH"
+    required: true
+  TEST_SUITE:
+    description: "TEST_SUITE"
+    required: true
+  TEST_FILE_TYPE:
+    description: "TEST_FILE_TYPE"
+    required: true
+  COMMIT_HASH:
+    description: "COMMIT_HASH"
+    required: true
+  JOB_ID:
+    description: "JOB_ID"
+    required: true
+  FILES:
+    description: "FILES"
+    required: true
+  DASHBOARD_PUSH_TOKEN:
+    description: "DASHBOARD_PUSH_TOKEN"
+    required: true
