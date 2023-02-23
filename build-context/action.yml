@@ -1,4 +1,4 @@
-name: "Pull request image arguments"
+name: "Build context"
 runs:
   using: node16
   main: dist/index.js
