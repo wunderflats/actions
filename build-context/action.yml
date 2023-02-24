@@ -3,12 +3,6 @@ runs:
   using: node16
   main: dist/index.js
 
-# Glossary by examples
-# image registry e.g. ghcr.io/wunderflats
-# image short name: e.g. myproject (not official)
-# tag: 1.2.4
-# full image name: ghcr.io/wunderflats/myproject:1.2.4 (not official)
-
 inputs:
   deploy-image-registry:
     description: The image registry to use for images that get deployed

@@ -23,13 +23,13 @@ const deployImageSha = `${deployRegistry}/${shortImageName}:${gitSha}`;
 const deployImageBranch = `${deployRegistry}/${shortImageName}:${escapedBranch}`;
 
 const outputs = {
-  WF_GIT_SHA: gitSha,
-  WF_GIT_BRANCH: gitBranch,
-  WF_GIT_ESCAPED_BRANCH: gitSha,
-  WF_TEST_IMAGE_SHA: testImageSha,
-  WF_TEST_IMAGE_BRANCH: testImageBranch,
-  WF_DEPLOY_IMAGE_SHA: deployImageSha,
-  WF_DEPLOY_IMAGE_BRANCH: deployImageBranch,
+  "git-sha": gitSha,
+  "git-branch": gitBranch,
+  "git-escaped-branch": gitSha,
+  "test-image-sha": testImageSha,
+  "test-image-branch": testImageBranch,
+  "deploy-image-sha": deployImageSha,
+  "deploy-image-branch": deployImageBranch,
 };
 
 for (const [key, value] of Object.entries(outputs)) {
