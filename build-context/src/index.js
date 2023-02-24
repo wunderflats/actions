@@ -12,34 +12,31 @@ const gitBranch = isPullRequest
 
 const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
 const testingRegistry = "ghcr.io/wunderflats";
-const deployRegistry =
-  core.getInput("deploy-image-registry") || "DEPLOY_REGISTRY_NOT_SET";
 const shortImageName =
   core.getInput("short-image-name") || github.context.repo.repo;
+const projects = core
+  .getInput("projects")
+  .split(",")
+  .map((project) => project.trim(project));
 
 // Outputs
-const testImageRepository = `${testingRegistry}/${shortImageName}`;
-const testImageSha = `${testImageRepository}:${gitSha}`;
-const testImageBranch = `${testImageRepository}:${escapedBranch}`;
 
-const deployImageSha = `${deployRegistry}/${shortImageName}:${gitSha}`;
-const deployImageBranch = `${deployRegistry}/${shortImageName}:${escapedBranch}`;
+core.setOutput("git-sha", gitSha);
+core.setOutput("git-branch", gitBranch);
+core.setOutput("git-escaped-branch", escapedBranch);
 
-const testImageRepositoryTemplate = `${testingRegistry}/PROJECT`;
+for (const project of projects) {
+  const testImageRepository = `${testingRegistry}/${shortImageName}`;
+  const testImageSha = `${testImageRepository}:${gitSha}`;
+  const testImageBranch = `${testImageRepository}:${escapedBranch}`;
+  const outputs = [
+    [`${project}-image-repository`, testImageRepository],
+    [`${project}-image-sha`, testImageSha],
+    [`${project}-image-branch`, testImageBranch],
+  ];
 
-const outputs = {
-  "git-sha": gitSha,
-  "git-branch": gitBranch,
-  "git-escaped-branch": gitSha,
-  "test-image-repository": testImageRepository,
-  "test-image-sha": testImageSha,
-  "test-image-branch": testImageBranch,
-  "deploy-image-sha": deployImageSha,
-  "deploy-image-branch": deployImageBranch,
-  "image-repository-template": testImageRepositoryTemplate,
-};
-
-for (const [key, value] of Object.entries(outputs)) {
-  console.log(key, "=", value);
-  core.setOutput(key, value);
+  for (const [key, value] of outputs) {
+    console.log(key, "=", value);
+    core.setOutput(key, value);
+  }
 }
