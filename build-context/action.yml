@@ -11,29 +11,29 @@ inputs:
     required: false
 
 outputs:
-  WF_GIT_SHA:
+  git-sha:
     description: The git commit SHA that triggered the workflow
-  WF_GIT_BRANCH:
+  git-branch:
     description: The git branch that triggered the branch workflow or PR workflow
-  WF_GIT_BRANCH_ESCAPED:
+  git-branch-escaped:
     description: The git branch, but escaped with dashes
-  WF_REPOSITORY:
+  repository:
     description: >
       The docker repository
       e.g. ghcr.io/wunderflats/my-project
-  WF_TEST_IMAGE_SHA:
+  test-image-sha:
     description: >
       The full name of the testing image tagged with the git commit SHA
       e.g. ghcr.io/wunderflats/my-project-testing:abc12345
-  WF_TEST_IMAGE_BRANCH:
+  test-image-branch:
     description: >
       The full name of the testing image tagged with the git branch
       e.g. ghcr.io/wunderflats/my-project-testing:mybranch
-  WF_DEPLOY_IMAGE_SHA:
+  deploy-image-sha:
     description: >
       The full name of the deployment image tagged with the git commit SAH
       e.g. ghcr.io/wunderflats/my-project:mybranch
-  WF_DEPLOY_IMAGE_BRANCH:
+  deploy-image-branch:
     description: >
       The full name of the deployment image tagged with the git branch
       e.g. ghcr.io/wunderflats/my-project:mybranch
