@@ -12,24 +12,31 @@ const gitBranch = isPullRequest
 
 const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
 const testingRegistry = "ghcr.io/wunderflats";
-const deployRegistry = core.getInput("deploy-image-registry");
+const deployRegistry =
+  core.getInput("deploy-image-registry") || "DEPLOY_REGISTRY_NOT_SET";
 const shortImageName =
   core.getInput("short-image-name") || github.context.repo.repo;
 
 // Outputs
-const testImageSha = `${testingRegistry}/${shortImageName}:${gitSha}`;
-const testImageBranch = `${testingRegistry}/${shortImageName}:${escapedBranch}`;
+const testImageRepository = `${testingRegistry}/${shortImageName}`;
+const testImageSha = `${testImageRepository}:${gitSha}`;
+const testImageBranch = `${testImageRepository}:${escapedBranch}`;
+
 const deployImageSha = `${deployRegistry}/${shortImageName}:${gitSha}`;
 const deployImageBranch = `${deployRegistry}/${shortImageName}:${escapedBranch}`;
+
+const testImageRepositoryTemplate = `${testingRegistry}/PROJECT`;
 
 const outputs = {
   "git-sha": gitSha,
   "git-branch": gitBranch,
   "git-escaped-branch": gitSha,
+  "test-image-repository": testImageRepository,
   "test-image-sha": testImageSha,
   "test-image-branch": testImageBranch,
   "deploy-image-sha": deployImageSha,
   "deploy-image-branch": deployImageBranch,
+  "image-repository-template": testImageRepositoryTemplate,
 };
 
 for (const [key, value] of Object.entries(outputs)) {

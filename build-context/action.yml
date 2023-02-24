@@ -17,23 +17,32 @@ outputs:
     description: The git branch that triggered the branch workflow or PR workflow
   git-branch-escaped:
     description: The git branch, but escaped with dashes
-  repository:
+
+  # Image names
+  test-image-repository:
     description: >
-      The docker repository
-      e.g. ghcr.io/wunderflats/my-project
+      The repository of the test image, without a tag
+      e.g. `ghcr.io/wunderflats/my-project-testing`
   test-image-sha:
     description: >
       The full name of the testing image tagged with the git commit SHA
-      e.g. ghcr.io/wunderflats/my-project-testing:abc12345
+      e.g. `ghcr.io/wunderflats/my-project-testing:abc12345
   test-image-branch:
     description: >
       The full name of the testing image tagged with the git branch
-      e.g. ghcr.io/wunderflats/my-project-testing:mybranch
+      e.g. `ghcr.io/wunderflats/my-project-testing:mybranch`
   deploy-image-sha:
     description: >
       The full name of the deployment image tagged with the git commit SAH
-      e.g. ghcr.io/wunderflats/my-project:mybranch
+      e.g. `ghcr.io/wunderflats/my-project:mybranch`
   deploy-image-branch:
     description: >
       The full name of the deployment image tagged with the git branch
-      e.g. ghcr.io/wunderflats/my-project:mybranch
+      e.g. `ghcr.io/wunderflats/my-project:mybranch`
+
+  # Templates
+  test-image-repository-template:
+    description: >
+      Similar to test-image-repository (e.g. `ghcr.io/wunderflats/PROJECT`), and
+      useful for pulling images from other projects when combined with bash
+      replacements
