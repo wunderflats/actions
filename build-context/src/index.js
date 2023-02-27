@@ -14,10 +14,12 @@ const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
 const testingRegistry = "ghcr.io/wunderflats";
 const shortImageName =
   core.getInput("short-image-name") || github.context.repo.repo;
-const projects = core
-  .getInput("projects")
-  .split(",")
-  .map((project) => project.trim(project));
+const projectsEnv = process.ENV["BUILD_CONTEXT_PROJECTS"];
+if (!projectsEnv) {
+  throw new Error("BUILD_CONTEXT_PROJECTS is not set");
+}
+
+const projects = projectsEnv.split(",").map((project) => project.trim(project));
 
 // Outputs
 
