@@ -1,0 +1,9 @@
+name: "cancel-if-not-latest"
+description: "Cancel a branch workflow if it's not triggered by the latest commit of its branch"
+runs:
+  using: "node16"
+  main: "dist/index.js"
+inputs:
+  GITHUB_TOKEN:
+    description: "GitHub token"
+    required: true
