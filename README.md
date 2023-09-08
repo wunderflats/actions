@@ -21,6 +21,25 @@ jobs:
 
 ---
 
+## cancel-if-not-latest
+
+This action cancels a workflow if it is not running on the last commit of a the event's `ref`. This can be used e.g. to prevent jobs from running on the non-latest push to a `main` or `master` branch.
+
+:warning: This only works in `push` events, not `pull_request`.
+
+#### Example
+
+```yaml
+jobs:
+  deploy-everything:
+    steps:
+      - uses: wunderflats/actions/cancel-if-not-latest@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+---
+
 ## prevent-concurrent-deploy
 
 A github action to prevent concurrent deployment. This step will fail if there is another active workflow on the same branch.
