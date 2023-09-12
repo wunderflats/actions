@@ -23,8 +23,8 @@ async function run() {
   });
   const latestCommitSha = latestCommit.data.sha;
 
-  core.debug(`Current commit SHA: ${thisCommitSha}`);
-  core.debug(`Latest commit SHA: ${latestCommitSha}`);
+  core.info(`Current commit SHA: ${thisCommitSha}`);
+  core.info(`Latest commit SHA: ${latestCommitSha}`);
 
   if (thisCommitSha !== latestCommitSha) {
     core.error(
