@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "rm -rf ./dist && ncc build ./src -o ./dist -m"
+    "build": "rm -rf ./dist && ncc build ./src -o ./dist"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@vercel/ncc": "^0.36.1",
     "chalk": "^5.2.0",
     "env-var": "^7.3.0",
     "prettier": "^2.8.4",
     "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.0"
   }
 }
