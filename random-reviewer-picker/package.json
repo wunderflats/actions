@@ -8,6 +8,6 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^2.1.0",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.21"
   }
 }
