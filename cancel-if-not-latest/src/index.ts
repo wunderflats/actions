@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
+import * as process from "node:process";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const octokit = github.getOctokit(token);
@@ -22,21 +23,25 @@ async function run() {
     ref: github.context.ref,
   });
   const latestCommitSha = latestCommit.data.sha;
+  const attempt = process.env.GITHUB_RUN_ATTEMPT;
 
   core.info(`Current commit SHA: ${thisCommitSha}`);
   core.info(`Latest commit SHA: ${latestCommitSha}`);
+  core.info(`Attempt: ${attempt}`);
 
-  if (thisCommitSha !== latestCommitSha) {
-    core.error(
-      "This workflow run was cancelled because it tried to run on a commit that is not the latest."
-    );
-    const { runId } = github.context;
-    await octokit.rest.actions.cancelWorkflowRun({
-      owner,
-      repo,
-      run_id: runId,
-    });
-  } else {
+  const isLatestCommit = thisCommitSha === latestCommitSha;
+  if (isLatestCommit) {
     core.info("All good!");
+    return;
   }
+
+  const isFirstAttempt = attempt === "1";
+  if (isFirstAttempt) {
+    // Someone has made a new commit in the meantime, but this is still the first attempt of this workflow run
+    core.info("All good!");
+    return;
+  }
+
+  const message = "This workflow run is not the latest commit on this branch";
+  core.setFailed(message);
 }

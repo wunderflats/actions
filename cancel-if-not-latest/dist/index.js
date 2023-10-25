@@ -9593,6 +9593,9 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(2186);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var node_process__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(7742);
+/* harmony import */ var node_process__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(node_process__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN", { required: true });
@@ -9611,20 +9614,23 @@ async function run() {
         ref: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.ref,
     });
     const latestCommitSha = latestCommit.data.sha;
+    const attempt = node_process__WEBPACK_IMPORTED_MODULE_2__.env.GITHUB_RUN_ATTEMPT;
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Current commit SHA: ${thisCommitSha}`);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Latest commit SHA: ${latestCommitSha}`);
-    if (thisCommitSha !== latestCommitSha) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.error("This workflow run was cancelled because it tried to run on a commit that is not the latest.");
-        const { runId } = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context;
-        await octokit.rest.actions.cancelWorkflowRun({
-            owner,
-            repo,
-            run_id: runId,
-        });
-    }
-    else {
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Attempt: ${attempt}`);
+    const isLatestCommit = thisCommitSha === latestCommitSha;
+    if (isLatestCommit) {
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("All good!");
+        return;
     }
+    const isFirstAttempt = attempt === "1";
+    if (isFirstAttempt) {
+        // Someone has made a new commit in the meantime, but this is still the first attempt of this workflow run
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("All good!");
+        return;
+    }
+    const message = "This workflow run is not the latest commit on this branch";
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(message);
 }
 
 __webpack_async_result__();
@@ -9686,6 +9692,13 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("https");
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
+
+/***/ }),
+
+/***/ 7742:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:process");
 
 /***/ }),
 
