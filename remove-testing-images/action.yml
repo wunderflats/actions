@@ -1,5 +1,5 @@
 name: "remove-testing-images"
-description: "Remove a testing image by tag or clean up all untagged images"
+description: "Remove a testing image by tag or clean up all unneeded images(untagged or with only one commit hash tag)"
 runs:
   using: "node20"
   main: "dist/index.js"

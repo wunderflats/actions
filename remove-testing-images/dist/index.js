@@ -9617,7 +9617,7 @@ async function run() {
             if (!testingImageId) {
                 throw new Error(`No testing image found with tag ${tag}`);
             }
-            return RemoveTestingImage(testingImageId);
+            return removeTestingImage(testingImageId);
         }
         return cleanupUnneededTestingImages();
     }
@@ -9669,20 +9669,21 @@ async function cleanupUnneededTestingImages() {
     if (imagesToBeDeleted.length > 0) {
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.startGroup(`🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`);
         for (const imageId of imagesToBeDeleted) {
-            await RemoveTestingImage(imageId);
+            await removeTestingImage(imageId);
         }
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.endGroup();
     }
 }
-async function RemoveTestingImage(imageId) {
+async function removeTestingImage(imageId) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`⏳ image with id ${imageId} is about to be deleted...`);
     try {
-        await octokit.rest.packages.deletePackageVersionForOrg({
+        const response = await octokit.rest.packages.deletePackageVersionForOrg({
             package_type: "container",
             package_name: packageName,
             org: "wunderflats",
             package_version_id: imageId,
         });
+        console.log("Header of Delete request", response.headers);
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`✅ image with id ${imageId} deleted.`);
     }
     catch (error) {
