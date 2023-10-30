@@ -117,14 +117,12 @@ async function removeTestingImage(imageId) {
   core.info(`⏳ image with id ${imageId} is about to be deleted...`);
 
   try {
-    const response = await octokit.rest.packages.deletePackageVersionForOrg({
+    await octokit.rest.packages.deletePackageVersionForOrg({
       package_type: "container",
       package_name: packageName,
       org: "wunderflats",
       package_version_id: imageId,
     });
-
-    console.log("Header of Delete request", response.headers);
 
     core.info(`✅ image with id ${imageId} deleted.`);
   } catch (error) {
