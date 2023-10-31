@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
+import moment from "moment";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const packageName = core.getInput("PACKAGE_NAME", { required: true });
@@ -103,23 +104,34 @@ async function cleanupUnneededTestingImages() {
         imageTags[0].length === 40 &&
         /^[A-F0-9]+$/i.test(imageTags[0]); // Hexadecimal check
 
-      if (imageTags.length == 0 || isUnnecessaryImageWithHashTag) {
+      const isOldImage = moment
+        .utc(image.created_at)
+        .isBefore(moment.utc().subtract(3, "months"));
+
+      if (
+        imageTags.length == 0 ||
+        isUnnecessaryImageWithHashTag ||
+        isOldImage
+      ) {
         imagesToBeDeleted.push(image.id);
       }
     }
   }
 
-  if (imagesToBeDeleted.length > 0) {
-    core.startGroup(
-      `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`
-    );
-
-    for (const imageId of imagesToBeDeleted) {
-      await removeTestingImage(imageId);
-    }
-
-    core.endGroup();
+  if (imagesToBeDeleted.length === 0) {
+    core.info("🎉 no unneeded images found.");
+    return;
   }
+
+  core.startGroup(
+    `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`
+  );
+
+  for (const imageId of imagesToBeDeleted) {
+    await removeTestingImage(imageId);
+  }
+
+  core.endGroup();
 }
 
 async function removeTestingImage(imageId) {
