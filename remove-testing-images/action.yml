@@ -1,5 +1,5 @@
 name: "remove-testing-images"
-description: "Remove a testing image by tag or clean up all unneeded images(untagged or with only one commit hash tag)"
+description: "Remove a testing image by tag or clean up all unneeded and old images(untagged, with only one commit hash tag, older than 3 months)"
 runs:
   using: "node20"
   main: "dist/index.js"
@@ -9,6 +9,9 @@ inputs:
     required: true
   PACKAGE_NAME:
     description: "Container name, acceptable values: api-testing, website-testing, crm-testing, lld-testing"
+    required: true
+  BULK_CLEANUP:
+    description: "Whether the unneeded images should be deleted or not"
     required: true
   TAG:
     description: "A specific Tag to find and removing the image"

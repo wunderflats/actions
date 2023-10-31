@@ -1,11 +1,14 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
+import { parseISO, isBefore, subMonths } from "date-fns";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const packageName = core.getInput("PACKAGE_NAME", { required: true });
+const bulkCleanupInput = core.getInput("BULK_CLEANUP", { required: true });
 const tag = core.getInput("TAG");
 
 const octokit = github.getOctokit(token);
+const bulkCleanup = bulkCleanupInput === "true";
 
 await run();
 
@@ -23,6 +26,12 @@ async function run() {
   }
 
   try {
+    if (bulkCleanup && tag) {
+      throw new Error(
+        "Single image removal and bulk cleanup cannot be done together."
+      );
+    }
+
     if (tag) {
       const testingImageId = await findTestingImageByTag();
 
@@ -33,7 +42,9 @@ async function run() {
       return removeTestingImage(testingImageId);
     }
 
-    return cleanupUnneededTestingImages();
+    if (bulkCleanup) {
+      await cleanupUnneededTestingImages();
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -94,23 +105,35 @@ async function cleanupUnneededTestingImages() {
         imageTags[0].length === 40 &&
         /^[A-F0-9]+$/i.test(imageTags[0]); // Hexadecimal check
 
-      if (imageTags.length == 0 || isUnnecessaryImageWithHashTag) {
+      const isOldImage = isBefore(
+        parseISO(image.created_at),
+        subMonths(new Date(), 3)
+      );
+
+      if (
+        imageTags.length == 0 ||
+        isUnnecessaryImageWithHashTag ||
+        isOldImage
+      ) {
         imagesToBeDeleted.push(image.id);
       }
     }
   }
 
-  if (imagesToBeDeleted.length > 0) {
-    core.startGroup(
-      `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`
-    );
-
-    for (const imageId of imagesToBeDeleted) {
-      await removeTestingImage(imageId);
-    }
-
-    core.endGroup();
+  if (imagesToBeDeleted.length === 0) {
+    core.info("🎉 no unneeded images found.");
+    return;
   }
+
+  core.startGroup(
+    `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`
+  );
+
+  for (const imageId of imagesToBeDeleted) {
+    await removeTestingImage(imageId);
+  }
+
+  core.endGroup();
 }
 
 async function removeTestingImage(imageId) {
