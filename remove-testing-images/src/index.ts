@@ -3,6 +3,7 @@ import * as core from "@actions/core";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const packageName = core.getInput("PACKAGE_NAME", { required: true });
+const bulkCleanup = core.getInput("BULK_CLEANUP", { required: true });
 const tag = core.getInput("TAG");
 
 const octokit = github.getOctokit(token);
@@ -23,6 +24,12 @@ async function run() {
   }
 
   try {
+    if (bulkCleanup && tag) {
+      throw new Error(
+        "Single image removal and bulk cleanup cannot be done together."
+      );
+    }
+
     if (tag) {
       const testingImageId = await findTestingImageByTag();
 
@@ -33,7 +40,9 @@ async function run() {
       return removeTestingImage(testingImageId);
     }
 
-    return cleanupUnneededTestingImages();
+    if (bulkCleanup) {
+      await cleanupUnneededTestingImages();
+    }
   } catch (error) {
     core.setFailed(error.message);
   }

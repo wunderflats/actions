@@ -9597,6 +9597,7 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN", { required: true });
 const packageName = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("PACKAGE_NAME", { required: true });
+const bulkCleanup = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("BULK_CLEANUP", { required: true });
 const tag = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("TAG");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 await run();
@@ -9612,6 +9613,9 @@ async function run() {
         return;
     }
     try {
+        if (bulkCleanup && tag) {
+            throw new Error("Single image removal and bulk cleanup cannot be done together.");
+        }
         if (tag) {
             const testingImageId = await findTestingImageByTag();
             if (!testingImageId) {
@@ -9619,7 +9623,9 @@ async function run() {
             }
             return removeTestingImage(testingImageId);
         }
-        return cleanupUnneededTestingImages();
+        if (bulkCleanup) {
+            await cleanupUnneededTestingImages();
+        }
     }
     catch (error) {
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(error.message);
