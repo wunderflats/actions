@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
-import moment from "moment";
+import { parseISO, isBefore, subMonths } from "date-fns";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const packageName = core.getInput("PACKAGE_NAME", { required: true });
@@ -105,9 +105,10 @@ async function cleanupUnneededTestingImages() {
         imageTags[0].length === 40 &&
         /^[A-F0-9]+$/i.test(imageTags[0]); // Hexadecimal check
 
-      const isOldImage = moment
-        .utc(image.created_at)
-        .isBefore(moment.utc().subtract(3, "months"));
+      const isOldImage = isBefore(
+        parseISO(image.created_at),
+        subMonths(new Date(), 3)
+      );
 
       if (
         imageTags.length == 0 ||
@@ -139,12 +140,12 @@ async function removeTestingImage(imageId) {
   core.info(`⏳ image with id ${imageId} is about to be deleted...`);
 
   try {
-    await octokit.rest.packages.deletePackageVersionForOrg({
-      package_type: "container",
-      package_name: packageName,
-      org: "wunderflats",
-      package_version_id: imageId,
-    });
+    // await octokit.rest.packages.deletePackageVersionForOrg({
+    //   package_type: "container",
+    //   package_name: packageName,
+    //   org: "wunderflats",
+    //   package_version_id: imageId,
+    // });
 
     core.info(`✅ image with id ${imageId} deleted.`);
   } catch (error) {
