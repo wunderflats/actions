@@ -4,10 +4,11 @@ import moment from "moment";
 
 const token = core.getInput("GITHUB_TOKEN", { required: true });
 const packageName = core.getInput("PACKAGE_NAME", { required: true });
-const bulkCleanup = core.getInput("BULK_CLEANUP", { required: true });
+const bulkCleanupInput = core.getInput("BULK_CLEANUP", { required: true });
 const tag = core.getInput("TAG");
 
 const octokit = github.getOctokit(token);
+const bulkCleanup = bulkCleanupInput === "true";
 
 await run();
 
