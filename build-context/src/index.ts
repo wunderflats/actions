@@ -32,6 +32,15 @@ const imageSha = `${imageRepository}:${gitSha}`;
 const imageBranch = `${imageRepository}:${escapedBranch}`;
 const testImageDefaultBranch = `${imageRepository}:${defaultBranch}`;
 
+// Debug
+core.info(`git-sha: ${gitSha}`);
+core.info(`git-branch: ${gitBranch}`);
+core.info(`git-escaped-branch: ${escapedBranch}`);
+core.info(`image-repository: ${imageRepository}`);
+core.info(`image-sha: ${imageSha}`);
+core.info(`image-branch: ${imageBranch}`);
+core.info(`image-default-branch: ${testImageDefaultBranch}`);
+
 // Outputs
 core.setOutput("git-sha", gitSha);
 core.setOutput("git-branch", gitBranch);

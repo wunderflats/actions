@@ -9848,6 +9848,14 @@ const imageRepository = `${registry}/${shortImageName}`;
 const imageSha = `${imageRepository}:${gitSha}`;
 const imageBranch = `${imageRepository}:${escapedBranch}`;
 const testImageDefaultBranch = `${imageRepository}:${defaultBranch}`;
+// Debug
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`git-sha: ${gitSha}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`git-branch: ${gitBranch}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`git-escaped-branch: ${escapedBranch}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`image-repository: ${imageRepository}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`image-sha: ${imageSha}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`image-branch: ${imageBranch}`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`image-default-branch: ${testImageDefaultBranch}`);
 // Outputs
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("git-sha", gitSha);
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput("git-branch", gitBranch);
