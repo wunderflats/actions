@@ -8,9 +8,9 @@
   },
   "devDependencies": {
     "typescript": "5.1.6",
-    "@vercel/ncc": "^0.36.1"
+    "@vercel/ncc": "0.38.1"
   },
   "scripts": {
-    "build": "rm -rf ./dist && ncc build ./src -o ./dist -m"
+    "build": "rm -rf ./dist && ncc build src/index.ts -o dist"
   }
 }

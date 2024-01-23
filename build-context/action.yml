@@ -5,8 +5,8 @@ runs:
 
 inputs:
   registry:
-    description: The image registry to use for images that get deployed e.g. gchr.io
-    required: false
+    description: The image registry to use for images that get deployed e.g. ghcr.io
+    required: true
   project:
     description: The project to generate values for e.g. wunderflats/api; defaults to the current project
     required: true
