@@ -3,20 +3,19 @@ runs:
   using: node16
   main: dist/index.js
 
-# Glossary
-# - **image registry:** e.g. `ghcr.io/wunderflats`
-# - **project** e.g. `myproject` (not an official term)
-# - **repository:** the image registry followed by the short name e.g. `ghcr.io/wunderflats/myproject`
-# - **tag:** `1.2.4`
-# - **full image name:** `ghcr.io/wunderflats/myproject:1.2.4` (not an official term)
-
 inputs:
-  deploy-image-registry:
-    description: The image registry to use for images that get deployed
+  registry:
+    description: The image registry to use for images that get deployed e.g. gchr.io
     required: false
-  projects:
-    description: A comma-separate list of projects to generate names for
+  project:
+    description: The project to generate values for e.g. wunderflats/api; defaults to the current project
     required: true
+  image_name:
+    description: The path to append to the repository; defaults to `project`
+    required: false
+  default_branch:
+    default: master
+    required: false
 
 outputs:
   git-sha:
@@ -25,17 +24,19 @@ outputs:
     description: The git branch that triggered the push workflow or PR workflow
   git-branch-escaped:
     description: The git branch, but escaped with dashes
-
-  # Image names
-  "<project>-image-repository":
+  image-repository:
     description: >
       The repository of the test image, without a tag
       e.g. `ghcr.io/wunderflats/my-project`
-  "<project>-image-sha":
+  image-sha:
     description: >
       The full name of the image tagged with the git commit SHA
       e.g. `ghcr.io/wunderflats/my-project-testing:abc12345
-  "<project>-image-branch":
+  image-branch:
+    description: >
+      The full name of the image tagged with the git branch
+      e.g. `ghcr.io/wunderflats/my-project-testing:mybranch`
+  image-default-branch:
     description: >
       The full name of the image tagged with the git branch
       e.g. `ghcr.io/wunderflats/my-project-testing:mybranch`
