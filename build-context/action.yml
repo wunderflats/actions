@@ -7,12 +7,9 @@ inputs:
   registry:
     description: The image registry to use for images that get deployed e.g. ghcr.io
     required: true
-  project:
-    description: The project to generate values for e.g. wunderflats/api; defaults to the current project
-    required: true
   image_name:
-    description: The path to append to the repository; defaults to `project`
-    required: false
+    description: The path to append to the registry e.g. wunderflats/my-project
+    required: true
   default_branch:
     description: E.g. "main" or "master".
     default: master

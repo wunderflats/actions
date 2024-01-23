@@ -19,7 +19,7 @@ if (github.context.eventName === "pull_request") {
 
 // Input
 console.log(JSON.stringify(github.context, null, 2));
-const shortImageName = core.getInput("image-name") || github.context.repo.repo;
+const shortImageName = core.getInput("image-name", { required: true });
 const defaultBranch = core.getInput("default-branch", { required: false });
 
 const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");

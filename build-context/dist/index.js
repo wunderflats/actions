@@ -9839,7 +9839,7 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "pus
 }
 // Input
 console.log(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context, null, 2));
-const shortImageName = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("image-name") || _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo;
+const shortImageName = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("image-name", { required: true });
 const defaultBranch = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("default-branch", { required: false });
 const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
 const registry = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("registry", { required: true });
