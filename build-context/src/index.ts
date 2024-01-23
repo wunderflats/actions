@@ -18,7 +18,6 @@ if (github.context.eventName === "pull_request") {
 }
 
 // Input
-console.log(JSON.stringify(github.context, null, 2));
 const shortImageName = core.getInput("image-name", { required: true });
 const defaultBranch = core.getInput("default-branch", { required: false });
 
