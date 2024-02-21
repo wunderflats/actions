@@ -38561,35 +38561,6 @@ module.exports = parseParams
 /******/ }
 /******/ 
 /************************************************************************/
-/******/ /* webpack/runtime/compat get default export */
-/******/ (() => {
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__nccwpck_require__.n = (module) => {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			() => (module['default']) :
-/******/ 			() => (module);
-/******/ 		__nccwpck_require__.d(getter, { a: getter });
-/******/ 		return getter;
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__nccwpck_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 			}
-/******/ 		}
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
-/******/ 
 /******/ /* webpack/runtime/node module decorator */
 /******/ (() => {
 /******/ 	__nccwpck_require__.nmd = (module) => {
@@ -39273,17 +39244,15 @@ const chalkStderr = createChalk({level: stderrColor ? stderrColor.level : 0});
 var env_var = __nccwpck_require__(9459);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
-var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
-var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
 ;// CONCATENATED MODULE: ./src/config.ts
 
 
 
-const token = core_default().getInput("TEST_DASHBOARD_API_URL");
+const token = core.getInput("TEST_DASHBOARD_API_URL");
 console.log("CORE TOKEN", token);
-console.log("GITHUB", (github_default()));
+console.log("GITHUB", github);
 const config = {
     apiUrl: env_var.get("INPUT_API_URL").required().asString(),
     repository: env_var.get("INPUT_REPOSITORY").required().asString(),
@@ -39293,7 +39262,7 @@ const config = {
     commitHash: env_var.get("INPUT_COMMIT_HASH").required().asString(),
     jobId: env_var.get("INPUT_JOB_ID").required().asString(),
     files: env_var.get("INPUT_FILES").required().asString(),
-    runAttempt: github_default().context.runNumber.toString(10),
+    runAttempt: github.context.runNumber.toString(10),
     pushToken: env_var.get("INPUT_DASHBOARD_PUSH_TOKEN").required().asString(),
 };
 
