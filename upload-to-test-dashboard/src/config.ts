@@ -2,8 +2,9 @@ import * as env from "env-var";
 import * as github from "@actions/github";
 import * as core from "@actions/core";
 
-const token = core.getInput("TEST_DASHBOARD_API_URL");
-console.log("CORE TOKEN", token);
+const token = core.getInput("GITHUB_TOKEN", { required: true });
+const octokit = github.getOctokit(token);
+console.log("CORE TOKEN", JSON.stringify(octokit));
 
 console.log("GITHUB", JSON.stringify(github));
 
