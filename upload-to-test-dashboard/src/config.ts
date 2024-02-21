@@ -5,7 +5,7 @@ import * as core from "@actions/core";
 const token = core.getInput("TEST_DASHBOARD_API_URL");
 console.log("CORE TOKEN", token);
 
-console.log("GITHUB", github);
+console.log("GITHUB", JSON.stringify(github));
 
 export const config = {
   apiUrl: env.get("INPUT_API_URL").required().asString(),

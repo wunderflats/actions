@@ -39252,7 +39252,7 @@ var core = __nccwpck_require__(2186);
 
 const token = core.getInput("TEST_DASHBOARD_API_URL");
 console.log("CORE TOKEN", token);
-console.log("GITHUB", github);
+console.log("GITHUB", JSON.stringify(github));
 const config = {
     apiUrl: env_var.get("INPUT_API_URL").required().asString(),
     repository: env_var.get("INPUT_REPOSITORY").required().asString(),
