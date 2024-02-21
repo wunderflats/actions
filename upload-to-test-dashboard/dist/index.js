@@ -37573,6 +37573,7 @@ var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
 ;// CONCATENATED MODULE: ./src/config.ts
 
 
+console.log("GITHUB", (github_default()));
 const config = {
     apiUrl: env_var.get("INPUT_API_URL").required().asString(),
     repository: env_var.get("INPUT_REPOSITORY").required().asString(),
@@ -37582,7 +37583,7 @@ const config = {
     commitHash: env_var.get("INPUT_COMMIT_HASH").required().asString(),
     jobId: env_var.get("INPUT_JOB_ID").required().asString(),
     files: env_var.get("INPUT_FILES").required().asString(),
-    runAttempt: (github_default()).context.runNumber,
+    runAttempt: github_default().context.runNumber.toString(10),
     pushToken: env_var.get("INPUT_DASHBOARD_PUSH_TOKEN").required().asString(),
 };
 
@@ -37600,6 +37601,7 @@ function getUploadUrl() {
         commitHash: config.commitHash,
         jobId: config.jobId,
         token: config.pushToken,
+        runAttempt: config.runAttempt,
     });
     const { apiUrl, repository, branch } = config;
     return `${apiUrl}/${repository}/${branch}?${params.toString()}`;

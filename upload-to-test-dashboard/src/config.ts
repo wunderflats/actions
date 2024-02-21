@@ -1,6 +1,8 @@
 import * as env from "env-var";
 import github from "@actions/github";
 
+console.log("GITHUB", github);
+
 export const config = {
   apiUrl: env.get("INPUT_API_URL").required().asString(),
   repository: env.get("INPUT_REPOSITORY").required().asString(),
