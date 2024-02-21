@@ -1,5 +1,9 @@
 import * as env from "env-var";
 import github from "@actions/github";
+import core from "@actions/core";
+
+const token = core.getInput("TEST_DASHBOARD_API_URL");
+console.log("CORE TOKEN", token);
 
 console.log("GITHUB", github);
 
