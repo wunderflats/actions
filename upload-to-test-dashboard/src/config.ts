@@ -1,12 +1,8 @@
 import * as env from "env-var";
 import * as github from "@actions/github";
-import * as core from "@actions/core";
+// import * as core from "@actions/core";
 
-const token = core.getInput("GITHUB_TOKEN", { required: true });
-const octokit = github.getOctokit(token);
-console.log("CORE TOKEN", JSON.stringify(octokit));
-
-console.log("GITHUB", JSON.stringify(github));
+console.log(process.env);
 
 export const config = {
   apiUrl: env.get("INPUT_API_URL").required().asString(),
