@@ -1,8 +1,4 @@
 import * as env from "env-var";
-import * as github from "@actions/github";
-// import * as core from "@actions/core";
-
-console.log(process.env);
 
 export const config = {
   apiUrl: env.get("INPUT_API_URL").required().asString(),
@@ -13,6 +9,6 @@ export const config = {
   commitHash: env.get("INPUT_COMMIT_HASH").required().asString(),
   jobId: env.get("INPUT_JOB_ID").required().asString(),
   files: env.get("INPUT_FILES").required().asString(),
-  runAttempt: github.context.runNumber.toString(10),
+  runAttempt: env.get("GITHUB_RUN_ATTEMPT").asString(),
   pushToken: env.get("INPUT_DASHBOARD_PUSH_TOKEN").required().asString(),
 };
