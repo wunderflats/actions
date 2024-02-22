@@ -9,8 +9,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@actions/core": "1.10.1",
-    "@actions/github": "6.0.0",
     "chalk": "^5.2.0",
     "env-var": "^7.3.0",
     "shelljs": "^0.8.5"
