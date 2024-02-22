@@ -145,4 +145,29 @@ jobs:
           DASHBOARD_PUSH_TOKEN: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
 ```
 
+---
+
+## comment-snyk-report
+
+A github action that adds the Snyk report(`snyk test` & `snyk code test`) as a comment to PR
+
+#### Example:
+
+```
+jobs:
+  some-job:
+    name: Do Something
+    steps:
+      - name: run Snyk commands
+        run: |
+          snyk test --all-projects --json-file-output=snyk-dependencies-report.json
+          snyk code test --all-projects --json-file-output=snyk-codebase-report.json
+      - name: Comment reports
+        uses: wunderflats/actions/comment-snyk-report@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPENDENCIES_CHECK_FILE: snyk-dependencies-report.json
+          CODEBASE_CHECK_FILE: snyk-codebase-report.json
+```
+
 ## License: Apache-2.0
