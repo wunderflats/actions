@@ -1,10 +1,9 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
+import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
+/******/ var __webpack_modules__ = ({
 
 /***/ 9417:
 /***/ ((module) => {
 
-"use strict";
 
 module.exports = balanced;
 function balanced(a, b, str) {
@@ -302,7 +301,6 @@ var isArray = Array.isArray || function (xs) {
 /***/ 9459:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const variable = __nccwpck_require__(3839)
@@ -365,7 +363,6 @@ module.exports = from(process.env)
 /***/ 1023:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asString = __nccwpck_require__(7784)
@@ -386,7 +383,6 @@ module.exports = function asArray (value, delimiter) {
 /***/ 878:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asBoolStrict (value) {
@@ -405,7 +401,6 @@ module.exports = function asBoolStrict (value) {
 /***/ 1811:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asBool (value) {
@@ -431,7 +426,6 @@ module.exports = function asBool (value) {
 /***/ 5445:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asString = __nccwpck_require__(7784)
@@ -455,7 +449,6 @@ module.exports = function asEmailString (value) {
 /***/ 4933:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asString = __nccwpck_require__(7784)
@@ -476,7 +469,6 @@ module.exports = function asEnum (value, validValues) {
 /***/ 6489:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asFloat = __nccwpck_require__(4598)
@@ -497,7 +489,6 @@ module.exports = function asFloatNegative (value) {
 /***/ 939:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asFloat = __nccwpck_require__(4598)
@@ -518,7 +509,6 @@ module.exports = function asFloatPositive (value) {
 /***/ 4598:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asFloat (value) {
@@ -574,7 +564,6 @@ module.exports = {
 /***/ 5780:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asInt = __nccwpck_require__(9275)
@@ -595,7 +584,6 @@ module.exports = function asIntNegative (value) {
 /***/ 6374:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asInt = __nccwpck_require__(9275)
@@ -616,7 +604,6 @@ module.exports = function asIntPositive (value) {
 /***/ 9275:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asInt (value) {
@@ -635,7 +622,6 @@ module.exports = function asInt (value) {
 /***/ 9486:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asJson = __nccwpck_require__(7206)
@@ -656,7 +642,6 @@ module.exports = function asJsonArray (value) {
 /***/ 9249:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asJson = __nccwpck_require__(7206)
@@ -677,7 +662,6 @@ module.exports = function asJsonObject (value) {
 /***/ 7206:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asJson (value) {
@@ -694,7 +678,6 @@ module.exports = function asJson (value) {
 /***/ 1189:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asIntPositive = __nccwpck_require__(6374)
@@ -715,7 +698,6 @@ module.exports = function asPortNumber (value) {
 /***/ 4600:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asRegExp (value, flags) {
@@ -744,7 +726,6 @@ module.exports = function asRegExp (value, flags) {
 /***/ 7784:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function asString (value) {
@@ -757,7 +738,6 @@ module.exports = function asString (value) {
 /***/ 1557:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const asString = __nccwpck_require__(7784)
@@ -778,7 +758,6 @@ module.exports = function asUrlObject (value) {
 /***/ 3240:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const urlObject = __nccwpck_require__(1557)
@@ -793,7 +772,6 @@ module.exports = function asUrlString (value) {
 /***/ 5700:
 /***/ ((module) => {
 
-"use strict";
 
 
 /**
@@ -821,7 +799,6 @@ module.exports = EnvVarError
 /***/ 383:
 /***/ ((module) => {
 
-"use strict";
 
 
 /**
@@ -842,7 +819,6 @@ module.exports = function genLogger (out, prodFlag) {
 /***/ 3839:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const EnvVarError = __nccwpck_require__(5700)
@@ -4065,7 +4041,6 @@ function onceStrict (fn) {
 /***/ 8714:
 /***/ ((module) => {
 
-"use strict";
 
 
 function posix(path) {
@@ -4678,7 +4653,6 @@ module.exports = _chmod;
 /***/ 3687:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 // Ignore warning about 'new String()'
 /* eslint no-new-wrappers: 0 */
 
@@ -8016,155 +7990,105 @@ function wrappy (fn, cb) {
 /***/ 9491:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("assert");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
 
 /***/ }),
 
 /***/ 2081:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("child_process");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
 
 /***/ }),
 
 /***/ 2361:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("events");
 
 /***/ }),
 
 /***/ 7147:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("fs");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
 
 /***/ }),
 
 /***/ 2037:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("os");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 
 /***/ }),
 
 /***/ 1017:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("path");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
 
 /***/ }),
 
 /***/ 3837:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util");
 
 /***/ })
 
-/******/ 	});
+/******/ });
 /************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __nccwpck_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		var threw = true;
-/******/ 		try {
-/******/ 			__webpack_modules__[moduleId](module, module.exports, __nccwpck_require__);
-/******/ 			threw = false;
-/******/ 		} finally {
-/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
-/******/ 		}
-/******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __nccwpck_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
 /******/ 	}
-/******/ 	
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		loaded: false,
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	var threw = true;
+/******/ 	try {
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nccwpck_require__);
+/******/ 		threw = false;
+/******/ 	} finally {
+/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 	}
+/******/ 
+/******/ 	// Flag the module as loaded
+/******/ 	module.loaded = true;
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/node module decorator */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.nmd = (module) => {
-/******/ 			module.paths = [];
-/******/ 			if (!module.children) module.children = [];
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/compat */
-/******/ 	
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
-/******/ 	
+/******/ /* webpack/runtime/node module decorator */
+/******/ (() => {
+/******/ 	__nccwpck_require__.nmd = (module) => {
+/******/ 		module.paths = [];
+/******/ 		if (!module.children) module.children = [];
+/******/ 		return module;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat */
+/******/ 
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-// ESM COMPAT FLAG
-__nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/shelljs/shell.js
 var shell = __nccwpck_require__(3516);
@@ -8394,11 +8318,11 @@ const ansiStyles = assembleStyles();
 /* harmony default export */ const ansi_styles = (ansiStyles);
 
 ;// CONCATENATED MODULE: external "node:process"
-const external_node_process_namespaceObject = require("node:process");
+const external_node_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:process");
 ;// CONCATENATED MODULE: external "node:os"
-const external_node_os_namespaceObject = require("node:os");
+const external_node_os_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:os");
 ;// CONCATENATED MODULE: external "node:tty"
-const external_node_tty_namespaceObject = require("node:tty");
+const external_node_tty_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:tty");
 ;// CONCATENATED MODULE: ./node_modules/chalk/source/vendor/supports-color/index.js
 
 
@@ -8829,162 +8753,131 @@ const chalkStderr = createChalk({level: stderrColor ? stderrColor.level : 0});
 
 // EXTERNAL MODULE: ./node_modules/env-var/env-var.js
 var env_var = __nccwpck_require__(9459);
-var env_var_default = /*#__PURE__*/__nccwpck_require__.n(env_var);
-;// CONCATENATED MODULE: ./src/config.js
+;// CONCATENATED MODULE: ./src/config.ts
 
+const config = {
+    apiUrl: env_var.get("INPUT_API_URL").required().asString(),
+    repository: env_var.get("INPUT_REPOSITORY").required().asString(),
+    branch: env_var.get("INPUT_BRANCH").required().asString(),
+    testSuite: env_var.get("INPUT_TEST_SUITE").required().asString(),
+    testFileType: env_var.get("INPUT_TEST_FILE_TYPE").required().asString(),
+    commitHash: env_var.get("INPUT_COMMIT_HASH").required().asString(),
+    jobId: env_var.get("INPUT_JOB_ID").required().asString(),
+    files: env_var.get("INPUT_FILES").required().asString(),
+    runAttempt: env_var.get("GITHUB_RUN_ATTEMPT").asString(),
+    pushToken: env_var.get("INPUT_DASHBOARD_PUSH_TOKEN").required().asString(),
+};
 
-/* harmony default export */ const config = ({
-  apiUrl: env_var_default().get('INPUT_API_URL').required().asString(),
-  repository: env_var_default().get('INPUT_REPOSITORY').required().asString(),
-  branch: env_var_default().get('INPUT_BRANCH').required().asString(),
-  testSuite: env_var_default().get('INPUT_TEST_SUITE').required().asString(),
-  testFileType: env_var_default().get('INPUT_TEST_FILE_TYPE').required().asString(),
-  commitHash: env_var_default().get('INPUT_COMMIT_HASH').required().asString(),
-  jobId: env_var_default().get('INPUT_JOB_ID').required().asString(),
-  files: env_var_default().get('INPUT_FILES').required().asString(),
-  pushToken: env_var_default().get('INPUT_DASHBOARD_PUSH_TOKEN').required().asString(),
-});
-
-;// CONCATENATED MODULE: ./src/index.js
-
+;// CONCATENATED MODULE: ./src/index.ts
 
 
 
 shell.set("-e");
-
 const print = (message = "") => process.stdout.write(message);
-
 const println = (message = "") => print(message + "\n");
-
 function getUploadUrl() {
-  const params = new URLSearchParams({
-    testSuite: config.testSuite,
-    testFileType: config.testFileType,
-    commitHash: config.commitHash,
-    jobId: config.jobId,
-    token: config.pushToken,
-  });
-
-  const { apiUrl, repository, branch } = config;
-
-  return `${apiUrl}/${repository}/${branch}?${params.toString()}`;
+    const params = new URLSearchParams({
+        testSuite: config.testSuite,
+        testFileType: config.testFileType,
+        commitHash: config.commitHash,
+        jobId: config.jobId,
+        token: config.pushToken,
+        runAttempt: config.runAttempt,
+    });
+    const { apiUrl, repository, branch } = config;
+    return `${apiUrl}/${repository}/${branch}?${params.toString()}`;
 }
-
 function uploadFile(url, file) {
-  const result = shell.exec(
-    `curl -X POST --retry 3 --retry-delay 5 -F "testFile=@${file}" "${url}"`,
-    { silent: true },
-  );
-
-  if (result.code !== 0) {
-    throw new Error(`curl exit code: ${result.code}`);
-  }
-
-  let response;
-
-  try {
-    response = JSON.parse(result.stdout);
-  } catch (error) {
-    throw new Error(
-      `API response does not seem to be a valid JSON: ${error.message}`,
-    );
-  }
-
-  if (response.success === false) {
-    throw new Error(`API response reason: ${response.reason}`);
-  }
-}
-
-function listFiles(path) {
-  try {
-    return shell.ls(path);
-  } catch (error) {
-    throw new Error(`Could not list ${path}: ${error.message}`);
-  }
-}
-
-function run() {
-  const uploadUrl = getUploadUrl();
-
-  const files = listFiles(config.files);
-
-  if (files.length === 0) {
-    throw new Error(`No files found to upload matching ${config.files}`);
-  }
-
-  let uploaded = 0,
-    failed = 0;
-
-  println(source.bgGreen(`Files to upload: ${files.length}\n`));
-
-  files.forEach((file) => {
-    print(`Uploading file ${file}... `);
-
-    try {
-      uploadFile(uploadUrl, file);
-      println(source.green("[OK]"));
-      uploaded++;
-    } catch (error) {
-      println(`${source.red("[FAILED]")} ${source.dim(error.message)}`);
-      failed++;
-    } finally {
-      shell.exec("sleep 2");
+    const result = shell.exec(`curl -X POST --retry 3 --retry-delay 5 -F "testFile=@${file}" "${url}"`, { silent: true });
+    if (result.code !== 0) {
+        throw new Error(`curl exit code: ${result.code}`);
     }
-  });
-
-  return {
-    uploaded,
-    failed,
-  };
+    let response;
+    try {
+        response = JSON.parse(result.stdout);
+    }
+    catch (error) {
+        throw new Error(`API response does not seem to be a valid JSON: ${error.message}`);
+    }
+    if (response.success === false) {
+        throw new Error(`API response reason: ${response.reason}`);
+    }
 }
-
+function listFiles(path) {
+    try {
+        return shell.ls(path);
+    }
+    catch (error) {
+        throw new Error(`Could not list ${path}: ${error.message}`);
+    }
+}
+function run() {
+    const uploadUrl = getUploadUrl();
+    const files = listFiles(config.files);
+    if (files.length === 0) {
+        throw new Error(`No files found to upload matching ${config.files}`);
+    }
+    let uploaded = 0, failed = 0;
+    println(source.bgGreen(`Files to upload: ${files.length}\n`));
+    files.forEach((file) => {
+        print(`Uploading file ${file}... `);
+        try {
+            uploadFile(uploadUrl, file);
+            println(source.green("[OK]"));
+            uploaded++;
+        }
+        catch (error) {
+            println(`${source.red("[FAILED]")} ${source.dim(error.message)}`);
+            failed++;
+        }
+        finally {
+            shell.exec("sleep 2");
+        }
+    });
+    return {
+        uploaded,
+        failed,
+    };
+}
 function getConfig() {
-  return [
-    source.bgGreen("Run configuration:"),
-    `  API URL: ${source.dim(config.apiUrl)}`,
-    `  Repository: ${source.dim(config.repository)}`,
-    `  Branch: ${source.dim(config.branch)}`,
-    `  Test suite: ${source.dim(config.testSuite)}`,
-    `  Test file type: ${source.dim(config.testFileType)}`,
-    `  Commit hash: ${source.dim(config.commitHash)}`,
-    `  Job ID: ${source.dim(config.jobId)}`,
-    `  Files: ${source.dim(config.files)}`,
-  ];
+    return [
+        source.bgGreen("Run configuration:"),
+        `  API URL: ${source.dim(config.apiUrl)}`,
+        `  Repository: ${source.dim(config.repository)}`,
+        `  Branch: ${source.dim(config.branch)}`,
+        `  Test suite: ${source.dim(config.testSuite)}`,
+        `  Test file type: ${source.dim(config.testFileType)}`,
+        `  Commit hash: ${source.dim(config.commitHash)}`,
+        `  Job ID: ${source.dim(config.jobId)}`,
+        `  Files: ${source.dim(config.files)}`,
+        `  Run attempt: ${source.dim(config.runAttempt)}`,
+    ];
 }
-
 function getSummary(uploaded, failed) {
-  if (uploaded === 0) {
-    return [source.red(`All ${failed} file(s) failed to upload`)];
-  }
-
-  if (failed === 0) {
-    return [source.green("All done, full success!")];
-  }
-
-  return [
-    source.green(`Uploaded files: ${uploaded}`),
-    source.red(`NOT uploaded files: ${failed}`),
-  ];
+    if (uploaded === 0) {
+        return [source.red(`All ${failed} file(s) failed to upload`)];
+    }
+    if (failed === 0) {
+        return [source.green("All done, full success!")];
+    }
+    return [
+        source.green(`Uploaded files: ${uploaded}`),
+        source.red(`NOT uploaded files: ${failed}`),
+    ];
 }
-
 try {
-  getConfig().forEach((line) => println(line));
-  println();
-
-  const { uploaded, failed } = run();
-
-  println();
-  getSummary(uploaded, failed).forEach((line) => println(line));
-
-  process.exit(0);
-} catch (error) {
-  println(source.bgRed("Script failed!"));
-  println(source.dim(error.message));
-  process.exit(1);
+    getConfig().forEach((line) => println(line));
+    println();
+    const { uploaded, failed } = run();
+    println();
+    getSummary(uploaded, failed).forEach((line) => println(line));
+    process.exit(0);
+}
+catch (error) {
+    println(source.bgRed("Script failed!"));
+    println(source.dim(error.message));
+    process.exit(1);
 }
 
 })();
 
-module.exports = __webpack_exports__;
-/******/ })()
-;
