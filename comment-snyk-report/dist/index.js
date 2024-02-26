@@ -46134,10 +46134,11 @@ ${r.paths.map((p) => `- \`${p}\``).join("\n")}`)
         .join("\n");
     const formattedReport = `
 
-  ### List of codebase-related vulnerabilities:
+  ### Codebase vulnerabilities
+  Here are only the high level issues found in the codebase. For more details, please check the workflow logs.
 
   <details closed>
-  <summary>High vulnerabilities</summary>
+  <summary>High level vulnerabilities</summary>
 
   ${highLevelIssues}
   </details>`;
