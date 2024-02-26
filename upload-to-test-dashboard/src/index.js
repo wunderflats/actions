@@ -1,6 +1,6 @@
 import shell from "shelljs";
 import chalk from "chalk";
-import { config } from "./config.js";
+import config from "./config";
 
 shell.set("-e");
 
@@ -15,7 +15,6 @@ function getUploadUrl() {
     commitHash: config.commitHash,
     jobId: config.jobId,
     token: config.pushToken,
-    runAttempt: config.runAttempt,
   });
 
   const { apiUrl, repository, branch } = config;
@@ -23,7 +22,7 @@ function getUploadUrl() {
   return `${apiUrl}/${repository}/${branch}?${params.toString()}`;
 }
 
-function uploadFile(url: string, file: string) {
+function uploadFile(url, file) {
   const result = shell.exec(
     `curl -X POST --retry 3 --retry-delay 5 -F "testFile=@${file}" "${url}"`,
     { silent: true },
@@ -48,7 +47,7 @@ function uploadFile(url: string, file: string) {
   }
 }
 
-function listFiles(path: string) {
+function listFiles(path) {
   try {
     return shell.ls(path);
   } catch (error) {
@@ -102,11 +101,10 @@ function getConfig() {
     `  Commit hash: ${chalk.dim(config.commitHash)}`,
     `  Job ID: ${chalk.dim(config.jobId)}`,
     `  Files: ${chalk.dim(config.files)}`,
-    `  Run attempt: ${chalk.dim(config.runAttempt)}`,
   ];
 }
 
-function getSummary(uploaded: number, failed: number) {
+function getSummary(uploaded, failed) {
   if (uploaded === 0) {
     return [chalk.red(`All ${failed} file(s) failed to upload`)];
   }

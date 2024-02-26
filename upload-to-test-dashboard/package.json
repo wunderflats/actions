@@ -1,23 +1,19 @@
 {
   "name": "@wunderflats/upload-to-test-dashboard",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
   "scripts": {
-    "build": "rm -rf ./dist && ncc build ./src/index.ts -o ./dist"
+    "build": "rm -rf ./dist && ncc build ./src -o ./dist"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "chalk": "^5.2.0",
     "env-var": "^7.3.0",
+    "prettier": "^2.8.4",
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
-    "@types/node": "18.18.4",
-    "@types/shelljs": "0.8.15",
-    "@vercel/ncc": "0.38.0",
-    "prettier": "^2.8.4",
-    "typescript": "5.3.3"
+    "@vercel/ncc": "^0.38.0"
   }
 }
