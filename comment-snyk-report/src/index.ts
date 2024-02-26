@@ -50,10 +50,11 @@ async function getDependenciesReport(): Promise<string> {
     "utf8"
   );
 
-  const fullReport: SnykTestReport[] = JSON.parse(dependenciesJsonReport);
+  let fullReport: SnykTestReport[] = JSON.parse(dependenciesJsonReport);
 
-  core.info("fullReport" + JSON.stringify(fullReport));
-  core.info("First report" + dependenciesJsonReport);
+  if (!_.isArray(fullReport)) {
+    fullReport = [fullReport];
+  }
 
   const customizedReport = fullReport.map(
     ({ projectName, ok, vulnerabilities }) => {

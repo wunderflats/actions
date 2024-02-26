@@ -46081,9 +46081,10 @@ async function getDependenciesReport() {
         return "✅ No issue found in the dependencies.";
     }
     const dependenciesJsonReport = await node_fs__WEBPACK_IMPORTED_MODULE_2___default().readFileSync(dependenciesCheckFilePath, "utf8");
-    const fullReport = JSON.parse(dependenciesJsonReport);
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("fullReport" + JSON.stringify(fullReport));
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("First report" + dependenciesJsonReport);
+    let fullReport = JSON.parse(dependenciesJsonReport);
+    if (!lodash__WEBPACK_IMPORTED_MODULE_3___default().isArray(fullReport)) {
+        fullReport = [fullReport];
+    }
     const customizedReport = fullReport.map(({ projectName, ok, vulnerabilities }) => {
         const severityCounts = lodash__WEBPACK_IMPORTED_MODULE_3___default().countBy(vulnerabilities, "severity");
         return {
