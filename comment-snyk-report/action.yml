@@ -1,0 +1,13 @@
+name: "comment-snyk-report"
+description: "Add a comment on the PR with Snyk report"
+runs:
+  using: "node20"
+  main: "dist/index.js"
+inputs:
+  GITHUB_TOKEN:
+    description: "GitHub token"
+    required: true
+  DEPENDENCIES_CHECK_FILE:
+    description: "The path of dependencies check report"
+  CODEBASE_CHECK_FILE:
+    description: "The path of codebase check report"
