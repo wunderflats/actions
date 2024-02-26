@@ -52,6 +52,9 @@ async function getDependenciesReport(): Promise<string> {
 
   const fullReport: SnykTestReport[] = JSON.parse(dependenciesJsonReport);
 
+  core.info("fullReport" + JSON.stringify(fullReport));
+  core.info("First report" + dependenciesJsonReport);
+
   const customizedReport = fullReport.map(
     ({ projectName, ok, vulnerabilities }) => {
       const severityCounts = _.countBy(vulnerabilities, "severity");
