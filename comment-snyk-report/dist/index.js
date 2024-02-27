@@ -46081,10 +46081,10 @@ async function getDependenciesReport() {
         return "✅ No issue found in the dependencies.";
     }
     const dependenciesJsonReport = await node_fs__WEBPACK_IMPORTED_MODULE_2___default().readFileSync(dependenciesCheckFilePath, "utf8");
-    let fullReport = JSON.parse(dependenciesJsonReport);
-    if (!lodash__WEBPACK_IMPORTED_MODULE_3___default().isArray(fullReport)) {
-        fullReport = [fullReport];
-    }
+    const parsedReport = JSON.parse(dependenciesJsonReport);
+    const fullReport = Array.isArray(parsedReport)
+        ? parsedReport
+        : [parsedReport];
     const customizedReport = fullReport.map(({ projectName, ok, vulnerabilities }) => {
         const severityCounts = lodash__WEBPACK_IMPORTED_MODULE_3___default().countBy(vulnerabilities, "severity");
         return {
@@ -46157,7 +46157,8 @@ async function addOrUpdateSnykComment(commentBody) {
         per_page: 100,
     }, (response, done) => {
         const commentsOfPR = response.data;
-        snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]");
+        snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]" &&
+            c.body.includes("Snyk Scan Report"));
         if (snykComment) {
             done();
         }

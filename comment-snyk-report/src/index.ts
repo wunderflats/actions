@@ -50,11 +50,13 @@ async function getDependenciesReport(): Promise<string> {
     "utf8"
   );
 
-  let fullReport: SnykTestReport[] = JSON.parse(dependenciesJsonReport);
+  const parsedReport: SnykTestReport[] | SnykTestReport = JSON.parse(
+    dependenciesJsonReport
+  );
 
-  if (!_.isArray(fullReport)) {
-    fullReport = [fullReport];
-  }
+  const fullReport: SnykTestReport[] = Array.isArray(parsedReport)
+    ? parsedReport
+    : [parsedReport];
 
   const customizedReport = fullReport.map(
     ({ projectName, ok, vulnerabilities }) => {
@@ -161,7 +163,9 @@ async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
       const commentsOfPR = response.data;
 
       snykComment = commentsOfPR.find(
-        (c: any) => c.user?.login === "github-actions[bot]"
+        (c: any) =>
+          c.user?.login === "github-actions[bot]" &&
+          c.body.includes("Snyk Scan Report")
       );
 
       if (snykComment) {
