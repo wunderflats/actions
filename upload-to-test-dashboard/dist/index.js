@@ -8834,15 +8834,16 @@ var env_var_default = /*#__PURE__*/__nccwpck_require__.n(env_var);
 
 
 /* harmony default export */ const config = ({
-  apiUrl: env_var_default().get('INPUT_API_URL').required().asString(),
-  repository: env_var_default().get('INPUT_REPOSITORY').required().asString(),
-  branch: env_var_default().get('INPUT_BRANCH').required().asString(),
-  testSuite: env_var_default().get('INPUT_TEST_SUITE').required().asString(),
-  testFileType: env_var_default().get('INPUT_TEST_FILE_TYPE').required().asString(),
-  commitHash: env_var_default().get('INPUT_COMMIT_HASH').required().asString(),
-  jobId: env_var_default().get('INPUT_JOB_ID').required().asString(),
-  files: env_var_default().get('INPUT_FILES').required().asString(),
-  pushToken: env_var_default().get('INPUT_DASHBOARD_PUSH_TOKEN').required().asString(),
+  apiUrl: env_var_default().get("INPUT_API_URL").required().asString(),
+  repository: env_var_default().get("INPUT_REPOSITORY").required().asString(),
+  branch: env_var_default().get("INPUT_BRANCH").required().asString(),
+  testSuite: env_var_default().get("INPUT_TEST_SUITE").required().asString(),
+  testFileType: env_var_default().get("INPUT_TEST_FILE_TYPE").required().asString(),
+  commitHash: env_var_default().get("INPUT_COMMIT_HASH").required().asString(),
+  jobId: env_var_default().get("INPUT_JOB_ID").required().asString(),
+  files: env_var_default().get("INPUT_FILES").required().asString(),
+  runAttempt: env_var_default().get("GITHUB_RUN_ATTEMPT").asString(),
+  pushToken: env_var_default().get("INPUT_DASHBOARD_PUSH_TOKEN").required().asString(),
 });
 
 ;// CONCATENATED MODULE: ./src/index.js
@@ -8863,6 +8864,7 @@ function getUploadUrl() {
     commitHash: config.commitHash,
     jobId: config.jobId,
     token: config.pushToken,
+    runAttempt: config.runAttempt,
   });
 
   const { apiUrl, repository, branch } = config;
@@ -8949,6 +8951,7 @@ function getConfig() {
     `  Commit hash: ${source.dim(config.commitHash)}`,
     `  Job ID: ${source.dim(config.jobId)}`,
     `  Files: ${source.dim(config.files)}`,
+    `  Run Attempt: ${source.dim(config.runAttempt)}`,
   ];
 }
 
