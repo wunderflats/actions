@@ -46149,12 +46149,20 @@ ${r.paths.map((p) => `- \`${p}\``).join("\n")}`)
 }
 async function addOrUpdateSnykComment(commentBody) {
     const { payload, repo } = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context;
-    const { data: commentsOfPR } = await octokit.rest.issues.listComments({
+    let snykComment;
+    await octokit.paginate(octokit.rest.issues.listComments, {
         issue_number: payload.number,
         owner: repo.owner,
         repo: repo.repo,
+        per_page: 100,
+    }, (response, done) => {
+        const commentsOfPR = response.data;
+        snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]");
+        if (snykComment) {
+            done();
+        }
+        return response.data;
     });
-    const snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]");
     if (!snykComment) {
         await octokit.rest.issues.createComment({
             issue_number: payload.number,

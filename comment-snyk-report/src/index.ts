@@ -147,14 +147,29 @@ ${r.paths.map((p: string) => `- \`${p}\``).join("\n")}`
 async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
   const { payload, repo } = github.context;
 
-  const { data: commentsOfPR } = await octokit.rest.issues.listComments({
-    issue_number: payload.number,
-    owner: repo.owner,
-    repo: repo.repo,
-  });
+  let snykComment: { id: number } | undefined;
 
-  const snykComment = commentsOfPR.find(
-    (c: any) => c.user?.login === "github-actions[bot]"
+  await octokit.paginate(
+    octokit.rest.issues.listComments,
+    {
+      issue_number: payload.number,
+      owner: repo.owner,
+      repo: repo.repo,
+      per_page: 100,
+    },
+    (response, done) => {
+      const commentsOfPR = response.data;
+
+      snykComment = commentsOfPR.find(
+        (c: any) => c.user?.login === "github-actions[bot]"
+      );
+
+      if (snykComment) {
+        done();
+      }
+
+      return response.data;
+    }
   );
 
   if (!snykComment) {
