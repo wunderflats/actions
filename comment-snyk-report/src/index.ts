@@ -14,6 +14,8 @@ const codebaseCheckFilePath = core.getInput("CODEBASE_CHECK_FILE");
 
 const octokit = github.getOctokit(token);
 
+const commentTitle = "🔎 Snyk Scan Report";
+
 await run();
 
 async function run() {
@@ -30,7 +32,7 @@ async function getCommentBody(): Promise<string> {
   const dependenciesReport = await getDependenciesReport();
   const codebaseReport = await getCodebaseReport();
 
-  const commentBody = `## 🔎 Snyk Scan Report
+  const commentBody = `## ${commentTitle}
 ${dependenciesReport}
 
 ---
@@ -50,7 +52,13 @@ async function getDependenciesReport(): Promise<string> {
     "utf8"
   );
 
-  const fullReport: SnykTestReport[] = JSON.parse(dependenciesJsonReport);
+  const parsedReport: SnykTestReport[] | SnykTestReport = JSON.parse(
+    dependenciesJsonReport
+  );
+
+  const fullReport: SnykTestReport[] = Array.isArray(parsedReport)
+    ? parsedReport
+    : [parsedReport];
 
   const customizedReport = fullReport.map(
     ({ projectName, ok, vulnerabilities }) => {
@@ -143,14 +151,31 @@ ${r.paths.map((p: string) => `- \`${p}\``).join("\n")}`
 async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
   const { payload, repo } = github.context;
 
-  const { data: commentsOfPR } = await octokit.rest.issues.listComments({
-    issue_number: payload.number,
-    owner: repo.owner,
-    repo: repo.repo,
-  });
+  let snykComment: { id: number } | undefined;
 
-  const snykComment = commentsOfPR.find(
-    (c: any) => c.user?.login === "github-actions[bot]"
+  await octokit.paginate(
+    octokit.rest.issues.listComments,
+    {
+      issue_number: payload.number,
+      owner: repo.owner,
+      repo: repo.repo,
+      per_page: 100,
+    },
+    (response, done) => {
+      const commentsOfPR = response.data;
+
+      snykComment = commentsOfPR.find(
+        (c: any) =>
+          c.user?.login === "github-actions[bot]" &&
+          c.body.includes(commentTitle)
+      );
+
+      if (snykComment) {
+        done();
+      }
+
+      return response.data;
+    }
   );
 
   if (!snykComment) {

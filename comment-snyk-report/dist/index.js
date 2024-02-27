@@ -46055,6 +46055,7 @@ const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN"
 const dependenciesCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("DEPENDENCIES_CHECK_FILE");
 const codebaseCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("CODEBASE_CHECK_FILE");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
+const commentTitle = "🔎 Snyk Scan Report";
 await run();
 async function run() {
     try {
@@ -46068,7 +46069,7 @@ async function run() {
 async function getCommentBody() {
     const dependenciesReport = await getDependenciesReport();
     const codebaseReport = await getCodebaseReport();
-    const commentBody = `## 🔎 Snyk Scan Report
+    const commentBody = `## ${commentTitle}
 ${dependenciesReport}
 
 ---
@@ -46081,7 +46082,10 @@ async function getDependenciesReport() {
         return "✅ No issue found in the dependencies.";
     }
     const dependenciesJsonReport = await node_fs__WEBPACK_IMPORTED_MODULE_2___default().readFileSync(dependenciesCheckFilePath, "utf8");
-    const fullReport = JSON.parse(dependenciesJsonReport);
+    const parsedReport = JSON.parse(dependenciesJsonReport);
+    const fullReport = Array.isArray(parsedReport)
+        ? parsedReport
+        : [parsedReport];
     const customizedReport = fullReport.map(({ projectName, ok, vulnerabilities }) => {
         const severityCounts = lodash__WEBPACK_IMPORTED_MODULE_3___default().countBy(vulnerabilities, "severity");
         return {
@@ -46146,12 +46150,21 @@ ${r.paths.map((p) => `- \`${p}\``).join("\n")}`)
 }
 async function addOrUpdateSnykComment(commentBody) {
     const { payload, repo } = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context;
-    const { data: commentsOfPR } = await octokit.rest.issues.listComments({
+    let snykComment;
+    await octokit.paginate(octokit.rest.issues.listComments, {
         issue_number: payload.number,
         owner: repo.owner,
         repo: repo.repo,
+        per_page: 100,
+    }, (response, done) => {
+        const commentsOfPR = response.data;
+        snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]" &&
+            c.body.includes(commentTitle));
+        if (snykComment) {
+            done();
+        }
+        return response.data;
     });
-    const snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]");
     if (!snykComment) {
         await octokit.rest.issues.createComment({
             issue_number: payload.number,
