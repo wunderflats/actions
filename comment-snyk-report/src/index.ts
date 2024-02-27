@@ -14,6 +14,8 @@ const codebaseCheckFilePath = core.getInput("CODEBASE_CHECK_FILE");
 
 const octokit = github.getOctokit(token);
 
+const commentTitle = "🔎 Snyk Scan Report";
+
 await run();
 
 async function run() {
@@ -30,7 +32,7 @@ async function getCommentBody(): Promise<string> {
   const dependenciesReport = await getDependenciesReport();
   const codebaseReport = await getCodebaseReport();
 
-  const commentBody = `## 🔎 Snyk Scan Report
+  const commentBody = `## ${commentTitle}
 ${dependenciesReport}
 
 ---
@@ -165,7 +167,7 @@ async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
       snykComment = commentsOfPR.find(
         (c: any) =>
           c.user?.login === "github-actions[bot]" &&
-          c.body.includes("Snyk Scan Report")
+          c.body.includes(commentTitle)
       );
 
       if (snykComment) {

@@ -46055,6 +46055,7 @@ const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN"
 const dependenciesCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("DEPENDENCIES_CHECK_FILE");
 const codebaseCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("CODEBASE_CHECK_FILE");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
+const commentTitle = "🔎 Snyk Scan Report";
 await run();
 async function run() {
     try {
@@ -46068,7 +46069,7 @@ async function run() {
 async function getCommentBody() {
     const dependenciesReport = await getDependenciesReport();
     const codebaseReport = await getCodebaseReport();
-    const commentBody = `## 🔎 Snyk Scan Report
+    const commentBody = `## ${commentTitle}
 ${dependenciesReport}
 
 ---
@@ -46158,7 +46159,7 @@ async function addOrUpdateSnykComment(commentBody) {
     }, (response, done) => {
         const commentsOfPR = response.data;
         snykComment = commentsOfPR.find((c) => c.user?.login === "github-actions[bot]" &&
-            c.body.includes("Snyk Scan Report"));
+            c.body.includes(commentTitle));
         if (snykComment) {
             done();
         }
