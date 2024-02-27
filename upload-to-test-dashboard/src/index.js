@@ -15,6 +15,7 @@ function getUploadUrl() {
     commitHash: config.commitHash,
     jobId: config.jobId,
     token: config.pushToken,
+    runAttempt: config.runAttempt,
   });
 
   const { apiUrl, repository, branch } = config;
@@ -101,6 +102,7 @@ function getConfig() {
     `  Commit hash: ${chalk.dim(config.commitHash)}`,
     `  Job ID: ${chalk.dim(config.jobId)}`,
     `  Files: ${chalk.dim(config.files)}`,
+    `  Run Attempt: ${chalk.dim(config.runAttempt)}`,
   ];
 }
 
