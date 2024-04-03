@@ -42,9 +42,10 @@ generateAccessToken() {
 
 # Run
 JWT=$(generateJWT "$APP_ID" "$PRIVATE_KEY")
-echo "::debug::JWT=$JWT"
 ACCESS_TOKEN=$(generateAccessToken "$APP_INSTALLATION_ID" "$JWT")
-echo "::debug::ACCESS_TOKEN=$ACCESS_TOKEN"
+
+echo "::add-mask::$JWT"
+echo "::add-mask::$ACCESS_TOKEN"
 
 echo "jwt=$JWT" >> $GITHUB_OUTPUT
 echo "access-token=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
