@@ -1,0 +1,29 @@
+name: Generate AccessToken for a GitHub App
+description: "Generates a JWT to authenticate as a GitHub App; requires two inputs generated from https://github.com/organizations/MY_ORG/settings/apps/MY_APP"
+author: "Wunderflats GmbH"
+inputs:
+  app-id:
+    description: The app ID
+    required: true
+  app-installation-id:
+    description: The app installation ID (found in the URL of the app's settings page)
+    required: true
+  pem:
+    description: A PEM file as generated under "Private Keys"
+    required: false
+outputs:
+  jwt:
+    description: The generated JWT (probably not useful to you, but it's there)
+  access-token:
+    description: The generated access token
+runs:
+  using: 'composite'
+  steps:
+    - id: generate-tokens
+      shell: bash
+      env:
+        APP_ID: ${{ inputs.app-id }}
+        PRIVATE_KEY: ${{ inputs.private-key }}
+        APP_INSTALLATION_ID: ${{ inputs.app-installation-id }}
+      # See https://github.com/actions/runner/issues/716
+      run: ${GITHUB_ACTION_PATH}/scripts/action.sh
