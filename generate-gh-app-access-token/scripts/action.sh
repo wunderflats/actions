@@ -24,6 +24,7 @@ generateJWT() {
 
     HEADER_PAYLOAD="${HEADER}"."${PAYLOAD}"
     SIGNATURE=$( openssl dgst -sha256 -sign <(echo -n "${PRIVATE_KEY}") <(echo -n "${HEADER_PAYLOAD}") | openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n' )
+    
     echo "$HEADER_PAYLOAD.$SIGNATURE"
 }
 
@@ -34,13 +35,16 @@ generateAccessToken() {
     JWT=$2
 
     API_URL="https://api.github.com"
-    TOKEN=$(curl --fail --silent -X POST -H "Authorization: Bearer ${JWT}" -H "Accept: application/vnd.github.v3+json" "$API_URL/app/installations/$APP_INSTALLATION_ID/access_tokens" | jq -r .token)
+    ENDPOINT="$API_URL/app/installations/$APP_INSTALLATION_ID/access_tokens"
+    TOKEN=$(curl --fail --silent -X POST -H "Authorization: Bearer ${JWT}" -H "Accept: application/vnd.github.v3+json" "$ENDPOINT" | jq -r .token)
     echo "$TOKEN"
 }
 
 # Run
 JWT=$(generateJWT "$APP_ID" "$PRIVATE_KEY")
+echo "::debug::JWT=$JWT"
 ACCESS_TOKEN=$(generateAccessToken "$APP_INSTALLATION_ID" "$JWT")
+echo "::debug::ACCESS_TOKEN=$ACCESS_TOKEN"
 
 echo "jwt=$JWT" >> $GITHUB_OUTPUT
 echo "access-token=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
