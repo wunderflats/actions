@@ -10,6 +10,7 @@ generateJWT() {
     APP_ID=$1
     PRIVATE_KEY=$2
 
+    # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app
     # https://stackoverflow.com/a/62646786
     NOW=$(date +%s)
     IAT="${NOW}"
@@ -27,6 +28,8 @@ generateJWT() {
 }
 
 generateAccessToken() {
+    # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app
+
     APP_INSTALLATION_ID=$1
     JWT=$2
 
