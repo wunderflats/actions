@@ -3,8 +3,8 @@
 set -euo pipefail
 
 APP_ID=$1
-PRIVATE_KEY=$2
-APP_INSTALLATION_ID=$3
+APP_INSTALLATION_ID=$2
+PRIVATE_KEY=$3
 
 generateJWT() {
     APP_ID=$1

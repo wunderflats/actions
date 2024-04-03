@@ -8,7 +8,7 @@ inputs:
   app-installation-id:
     description: The app installation ID (found in the URL of the app's settings page)
     required: true
-  pem:
+  private-key:
     description: A PEM file as generated under "Private Keys"
     required: false
 outputs:
@@ -21,9 +21,5 @@ runs:
   steps:
     - id: generate-tokens
       shell: bash
-      env:
-        APP_ID: ${{ inputs.app-id }}
-        PRIVATE_KEY: ${{ inputs.private-key }}
-        APP_INSTALLATION_ID: ${{ inputs.app-installation-id }}
       # See https://github.com/actions/runner/issues/716
-      run: ${GITHUB_ACTION_PATH}/scripts/action.sh
+      run: ${GITHUB_ACTION_PATH}/scripts/action.sh "${{ inputs.app-id }}" "${{ inputs.app-installation-id }}" "${{ inputs.private-key }}"
