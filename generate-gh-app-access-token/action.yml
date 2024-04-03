@@ -14,8 +14,10 @@ inputs:
 outputs:
   jwt:
     description: The generated JWT (probably not useful to you, but it's there)
+    value: ${{ steps.generate-tokens.outputs.jwt }}
   access-token:
     description: The generated access token
+    value: ${{ steps.generate-tokens.outputs.access-token }}
 runs:
   using: 'composite'
   steps:
