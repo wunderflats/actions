@@ -1,6 +1,7 @@
 name: "Build context"
+description: Information useful for builds
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
 
 inputs:
