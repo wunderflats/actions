@@ -8,8 +8,8 @@ inputs:
     description: The image registry to use for images that get deployed e.g. ghcr.io
     required: true
   image-name:
-    description: The path to append to the registry e.g. wunderflats/my-project
-    required: true
+    description: The path to append to the registry e.g. wunderflats/my-project, defaults to the repository name
+    required: false
   default-branch:
     description: E.g. "main" or "master".
     default: master

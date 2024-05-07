@@ -1,31 +1,29 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-// Context
+// Input
+const gitRepository = github.context.payload.repository;
+const shortImageName = core.getInput("image-name", { required: false }) || gitRepository; 
+const defaultBranch = core.getInput("default-branch", { required: false });
 
+// Context
 let gitSha: string;
+let gitBranch: string;
+
 if (github.context.eventName === "pull_request") {
   gitSha = github.context.payload.pull_request.head.sha;
+  gitBranch = process.env.GITHUB_HEAD_REF;
 } else if (github.context.eventName === "push") {
   gitSha = github.context.sha;
+  gitBranch = github.context.ref;
+} else {
+  throw new Error(`Unsupported event: ${github.context.eventName}`);
 }
-
-let gitBranch: string;
-if (github.context.eventName === "pull_request") {
-  gitBranch = github.context.payload.pull_request.head.ref;
-} else if (github.context.eventName === "push") {
-  github.context.ref;
-}
-
-// Input
-const shortImageName = core.getInput("image-name", { required: true });
-const defaultBranch = core.getInput("default-branch", { required: false });
 
 const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
 const registry = core.getInput("registry", { required: true });
 
 // Calculations
-
 const imageRepository = `${registry}/${shortImageName}`;
 const imageSha = `${imageRepository}:${gitSha}`;
 const imageBranch = `${imageRepository}:${escapedBranch}`;
