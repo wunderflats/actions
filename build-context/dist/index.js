@@ -9840,7 +9840,7 @@ else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "pus
 else {
     throw new Error(`Unsupported event: ${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}`);
 }
-const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
+const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]+/g, "-");
 const registry = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput("registry", { required: true });
 // Calculations
 const imageRepository = `${registry}/${shortImageName}`;

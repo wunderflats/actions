@@ -20,7 +20,7 @@ if (github.context.eventName === "pull_request") {
   throw new Error(`Unsupported event: ${github.context.eventName}`);
 }
 
-const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]/g, "-");
+const escapedBranch = gitBranch.replaceAll(/[^A-Za-z0-9]+/g, "-");
 const registry = core.getInput("registry", { required: true });
 
 // Calculations
