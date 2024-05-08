@@ -21,7 +21,7 @@ outputs:
     description: The git commit SHA that triggered the workflow
   git-branch:
     description: The git branch that triggered the push workflow or PR workflow
-  git-branch-escaped:
+  git-escaped-branch:
     description: The git branch, but escaped with dashes
   image-repository:
     description: >
