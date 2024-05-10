@@ -15,7 +15,7 @@ if (github.context.eventName === "pull_request") {
   gitBranch = process.env.GITHUB_HEAD_REF;
 } else if (github.context.eventName === "push") {
   gitSha = github.context.sha;
-  gitBranch = github.context.ref;
+  gitBranch = process.env.GITHUB_REF_NAME;
 } else {
   throw new Error(`Unsupported event: ${github.context.eventName}`);
 }

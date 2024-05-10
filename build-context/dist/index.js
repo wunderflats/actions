@@ -9835,7 +9835,7 @@ if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "pull_req
 }
 else if (_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName === "push") {
     gitSha = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.sha;
-    gitBranch = _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref;
+    gitBranch = process.env.GITHUB_REF_NAME;
 }
 else {
     throw new Error(`Unsupported event: ${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.eventName}`);
