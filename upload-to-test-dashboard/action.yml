@@ -2,7 +2,7 @@ name: "Upload results to the test dashboard"
 description: "Upload specific files to the test dashboard"
 author: "Wunderflats GmbH"
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/index.js"
 
 inputs:
