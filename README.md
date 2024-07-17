@@ -4,23 +4,6 @@ This repository contains a set of helpful github actions created and maintained 
 
 ---
 
-## auto-cancel
-
-This action automatically cancels all the other actions still running for the same branch. This helps save computing time by only letting the last CI trigger to run completely.
-
-#### Example:
-
-```
-jobs:
-  auto-cancel:
-    steps:
-      - uses: wunderflats/actions/auto-cancel@master
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
 ## cancel-if-not-latest
 
 This action cancels a workflow if it is not running on the last commit of a the event's `ref`. This can be used e.g. to prevent jobs from running on the non-latest push to a `main` or `master` branch.
@@ -40,22 +23,6 @@ jobs:
 
 ---
 
-## prevent-concurrent-deploy
-
-A github action to prevent concurrent deployment. This step will fail if there is another active workflow on the same branch.
-
-#### Example:
-
-```
-jobs:
-  prevent-concurrent-deploy:
-    steps:
-      - uses: wunderflats/actions/prevent-concurrent-deploy@master
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
 
 ## slack-deploy-notify
 
@@ -169,5 +136,3 @@ jobs:
           DEPENDENCIES_CHECK_FILE: snyk-dependencies-report.json
           CODEBASE_CHECK_FILE: snyk-codebase-report.json
 ```
-
-## License: Apache-2.0
