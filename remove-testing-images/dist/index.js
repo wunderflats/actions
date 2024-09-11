@@ -30676,6 +30676,7 @@ async function run() {
             return removeTestingImage(testingImageId);
         }
         if (bulkCleanup) {
+            // Cleanup images older than 2 months
             await cleanupUnneededTestingImages();
         }
     }
@@ -30715,14 +30716,8 @@ async function cleanupUnneededTestingImages() {
     })) {
         const testingImages = response.data;
         for (const image of testingImages) {
-            const imageTags = image.metadata.container.tags;
-            const isUnnecessaryImageWithHashTag = imageTags.length === 1 &&
-                imageTags[0].length === 40 &&
-                /^[A-F0-9]+$/i.test(imageTags[0]); // Hexadecimal check
-            const isOldImage = (0,date_fns__WEBPACK_IMPORTED_MODULE_2__.isBefore)((0,date_fns__WEBPACK_IMPORTED_MODULE_2__.parseISO)(image.created_at), (0,date_fns__WEBPACK_IMPORTED_MODULE_2__.subMonths)(new Date(), 3));
-            if (imageTags.length == 0 ||
-                isUnnecessaryImageWithHashTag ||
-                isOldImage) {
+            const isOldImage = (0,date_fns__WEBPACK_IMPORTED_MODULE_2__.isBefore)((0,date_fns__WEBPACK_IMPORTED_MODULE_2__.parseISO)(image.updated_at), (0,date_fns__WEBPACK_IMPORTED_MODULE_2__.subMonths)(new Date(), 2));
+            if (isOldImage) {
                 imagesToBeDeleted.push(image.id);
             }
         }

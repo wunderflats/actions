@@ -43,6 +43,7 @@ async function run() {
     }
 
     if (bulkCleanup) {
+      // Cleanup images older than 2 months
       await cleanupUnneededTestingImages();
     }
   } catch (error) {
@@ -98,23 +99,12 @@ async function cleanupUnneededTestingImages() {
   )) {
     const testingImages = response.data;
     for (const image of testingImages) {
-      const imageTags = image.metadata.container.tags;
-
-      const isUnnecessaryImageWithHashTag =
-        imageTags.length === 1 &&
-        imageTags[0].length === 40 &&
-        /^[A-F0-9]+$/i.test(imageTags[0]); // Hexadecimal check
-
       const isOldImage = isBefore(
-        parseISO(image.created_at),
-        subMonths(new Date(), 3)
+        parseISO(image.updated_at),
+        subMonths(new Date(), 2)
       );
 
-      if (
-        imageTags.length == 0 ||
-        isUnnecessaryImageWithHashTag ||
-        isOldImage
-      ) {
+      if (isOldImage) {
         imagesToBeDeleted.push(image.id);
       }
     }
