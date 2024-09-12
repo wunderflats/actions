@@ -30652,18 +30652,10 @@ const bulkCleanupInput = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("BU
 const tag = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("TAG");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 const bulkCleanup = bulkCleanupInput === "true";
+const packageType = "container";
+const organization = "wunderflats";
 await run();
 async function run() {
-    const acceptedPackageNames = [
-        "api-testing",
-        "website-testing",
-        "crm-testing",
-        "lld-testing",
-    ];
-    if (!acceptedPackageNames.includes(packageName)) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`package name ${packageName} is not supported.`);
-        return;
-    }
     try {
         if (bulkCleanup && tag) {
             throw new Error("Single image removal and bulk cleanup cannot be done together.");
@@ -30688,10 +30680,10 @@ async function findTestingImageByTag() {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`🔦 looking for testing image with tag ${tag}...`);
     let imagesWithRequestedTag;
     await octokit.paginate(octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg, {
-        package_type: "container",
+        package_type: packageType,
         state: "active",
         package_name: packageName,
-        org: "wunderflats",
+        org: organization,
         per_page: 100,
     }, (response, done) => {
         const testingImages = response.data;
@@ -30708,9 +30700,9 @@ async function cleanupUnneededTestingImages() {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("🔦 finding the unneeded images to cleanup...");
     const imagesToBeDeleted = [];
     for await (const response of octokit.paginate.iterator(octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg, {
-        package_type: "container",
+        package_type: packageType,
         package_name: packageName,
-        org: "wunderflats",
+        org: organization,
         state: "active",
         per_page: 100,
     })) {
@@ -30736,9 +30728,9 @@ async function removeTestingImage(imageId) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`⏳ image with id ${imageId} is about to be deleted...`);
     try {
         await octokit.rest.packages.deletePackageVersionForOrg({
-            package_type: "container",
+            package_type: packageType,
             package_name: packageName,
-            org: "wunderflats",
+            org: organization,
             package_version_id: imageId,
         });
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`✅ image with id ${imageId} deleted.`);

@@ -10,21 +10,12 @@ const tag = core.getInput("TAG");
 const octokit = github.getOctokit(token);
 const bulkCleanup = bulkCleanupInput === "true";
 
+const packageType = "container";
+const organization = "wunderflats";
+
 await run();
 
 async function run() {
-  const acceptedPackageNames = [
-    "api-testing",
-    "website-testing",
-    "crm-testing",
-    "lld-testing",
-  ];
-
-  if (!acceptedPackageNames.includes(packageName)) {
-    core.setFailed(`package name ${packageName} is not supported.`);
-    return;
-  }
-
   try {
     if (bulkCleanup && tag) {
       throw new Error(
@@ -59,10 +50,10 @@ async function findTestingImageByTag() {
   await octokit.paginate(
     octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
     {
-      package_type: "container",
+      package_type: packageType,
       state: "active",
       package_name: packageName,
-      org: "wunderflats",
+      org: organization,
       per_page: 100,
     },
     (response, done) => {
@@ -90,9 +81,9 @@ async function cleanupUnneededTestingImages() {
   for await (const response of octokit.paginate.iterator(
     octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
     {
-      package_type: "container",
+      package_type: packageType,
       package_name: packageName,
-      org: "wunderflats",
+      org: organization,
       state: "active",
       per_page: 100,
     }
@@ -131,9 +122,9 @@ async function removeTestingImage(imageId) {
 
   try {
     await octokit.rest.packages.deletePackageVersionForOrg({
-      package_type: "container",
+      package_type: packageType,
       package_name: packageName,
-      org: "wunderflats",
+      org: organization,
       package_version_id: imageId,
     });
 
