@@ -18,11 +18,10 @@ jobs:
     steps:
       - uses: wunderflats/actions/cancel-if-not-latest@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ---
-
 
 ## slack-deploy-notify
 
@@ -40,10 +39,10 @@ jobs:
       - if: failure()
         uses: wunderflats/actions/slack-deploy-notify@master
         with:
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          SLACK_NOTIFY_EVENT: DEPLOYMENT_PAUSED
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
+          github-run-id: ${{ github.run_id }}
+          slack-notify-event: DEPLOYMENT_PAUSED
+          commit-message: ${{ github.event.head_commit.message }}
+          webhook-token: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
 
 ---
@@ -101,15 +100,15 @@ jobs:
       - if: (success() || failure()) && steps.last_run.outputs.conclusion != 'success'
         uses: wunderflats/actions/upload-to-test-dashboard@master
         with:
-          API_URL: https://test-dashboard.wunderflats.xyz/api/test-result
-          REPOSITORY: my-repo-name
-          BRANCH: my-fantastic-branch
-          TEST_SUITE: jest
-          TEST_FILE_TYPE: jest
-          COMMIT_HASH: ${{ github.sha }}
-          JOB_ID: ${{ github.run_id }}
-          FILES: ./test-reports/*
-          DASHBOARD_PUSH_TOKEN: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
+          api-url: https://test-dashboard.wunderflats.xyz/api/test-result
+          repository: my-repo-name
+          branch: my-fantastic-branch
+          test-suite: jest
+          test-file-type: jest
+          commit-hash: ${{ github.sha }}
+          job-id: ${{ github.run_id }}
+          files: ./test-reports/*
+          dashboard-push-token: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
 ```
 
 ---
@@ -132,7 +131,29 @@ jobs:
       - name: Comment reports
         uses: wunderflats/actions/comment-snyk-report@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPENDENCIES_CHECK_FILE: snyk-dependencies-report.json
-          CODEBASE_CHECK_FILE: snyk-codebase-report.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dependencies-check-file: snyk-dependencies-report.json
+          codebase-check-file: snyk-codebase-report.json
+```
+
+---
+
+## remove-testing-images
+
+Removes a testing image by tag or clean up all unneeded and old images(older than 3 months)
+
+#### Example:
+
+```
+jobs:
+  delete-testing-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete latest testing image
+        uses: wunderflats/actions/remove-testing-images@master
+        with:
+          package-name: "api-testing"
+          tag: "branch-tag"
+          bulk-cleanup: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

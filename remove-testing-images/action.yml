@@ -1,5 +1,5 @@
 name: "remove-testing-images"
-description: "Remove a testing image by tag or clean up all unneeded and old images(untagged, with only one commit hash tag, older than 3 months)"
+description: "Removes a testing image by tag or clean up all unneeded and old images(older than 3 months)"
 runs:
   using: "node20"
   main: "dist/index.js"
