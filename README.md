@@ -76,10 +76,10 @@ jobs:
       - name: notifying
         uses: wunderflats/actions/slack-check-runs-notify@master
         with:
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WEBHOOK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          github_run_id: ${{ github.run_id }}
+          commit-message: ${{ github.event.head_commit.message }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          webhook-token: ${{ secrets.SLACK_TOKEN }}
 ```
 
 ---

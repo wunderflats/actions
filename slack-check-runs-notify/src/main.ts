@@ -49,7 +49,8 @@ async function run(): Promise<void> {
           return acc
         }
 
-        acc[job.name] = job.conclusion === 'success' || job.conclusion === 'skipped'
+        acc[job.name] =
+          job.conclusion === 'success' || job.conclusion === 'skipped'
 
         return acc
       },
@@ -71,7 +72,7 @@ async function run(): Promise<void> {
     }
   } catch (error) {
     console.error(error)
-    core.setFailed(error.message)
+    core.setFailed((error as Error).message)
   }
 }
 

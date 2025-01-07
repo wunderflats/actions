@@ -1566,7 +1566,8 @@ function run() {
                 if (acc[job.name] === true) {
                     return acc;
                 }
-                acc[job.name] = job.conclusion === 'success' || job.conclusion === 'skipped';
+                acc[job.name] =
+                    job.conclusion === 'success' || job.conclusion === 'skipped';
                 return acc;
             }, {});
             // uncomment for debugging
