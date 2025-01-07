@@ -46051,9 +46051,9 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN", { required: true });
-const dependenciesCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("DEPENDENCIES_CHECK_FILE");
-const codebaseCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("CODEBASE_CHECK_FILE");
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("github-token", { required: true });
+const dependenciesCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("dependencies-check-file");
+const codebaseCheckFilePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("codebase-check-file");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 const commentTitle = "🔎 Snyk Scan Report";
 await run();

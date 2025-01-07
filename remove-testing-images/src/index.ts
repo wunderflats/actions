@@ -2,10 +2,10 @@ import * as github from "@actions/github";
 import * as core from "@actions/core";
 import { parseISO, isBefore, subMonths } from "date-fns";
 
-const token = core.getInput("GITHUB_TOKEN", { required: true });
-const packageName = core.getInput("PACKAGE_NAME", { required: true });
-const bulkCleanupInput = core.getInput("BULK_CLEANUP", { required: true });
-const tag = core.getInput("TAG");
+const token = core.getInput("github-token", { required: true });
+const packageName = core.getInput("package-name", { required: true });
+const bulkCleanupInput = core.getInput("bulk-cleanup", { required: true });
+const tag = core.getInput("tag");
 
 const octokit = github.getOctokit(token);
 const bulkCleanup = bulkCleanupInput === "true";

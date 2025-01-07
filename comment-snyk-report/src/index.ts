@@ -8,9 +8,9 @@ import {
   SnykTestReport,
 } from "./types.js";
 
-const token = core.getInput("GITHUB_TOKEN", { required: true });
-const dependenciesCheckFilePath = core.getInput("DEPENDENCIES_CHECK_FILE");
-const codebaseCheckFilePath = core.getInput("CODEBASE_CHECK_FILE");
+const token = core.getInput("github-token", { required: true });
+const dependenciesCheckFilePath = core.getInput("dependencies-check-file");
+const codebaseCheckFilePath = core.getInput("codebase-check-file");
 
 const octokit = github.getOctokit(token);
 

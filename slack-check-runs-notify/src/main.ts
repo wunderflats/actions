@@ -6,12 +6,12 @@ const bent = require('bent')
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID!)
 
-const webhookToken = core.getInput('WEBHOOK_TOKEN')
-const commitMessage = core.getInput('COMMIT_MESSAGE')
-const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN')
-const FAILED_MESSAGE = core.getInput('FAILED_MESSAGE')
+const webhookToken = core.getInput('webhook-token')
+const commitMessage = core.getInput('commit-message')
+const token = core.getInput('github-token')
+const failedMessage = core.getInput('failed-message')
 
-const octokit = github.getOctokit(GITHUB_TOKEN)
+const octokit = github.getOctokit(token)
 
 const runLink = `https://github.com/${owner}/${repo}/actions/runs/${GITHUB_RUN_ID}`
 const commit =
@@ -21,7 +21,7 @@ const commit =
 // console.log({FAILED_MESSAGE})
 const deploymentTestFail = {
   text:
-    FAILED_MESSAGE ||
+    failedMessage ||
     `❌ A check failed for commit ${commit}<${runLink}|See github action>`
 }
 

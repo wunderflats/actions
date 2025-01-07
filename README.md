@@ -39,10 +39,10 @@ jobs:
       - if: failure()
         uses: wunderflats/actions/slack-deploy-notify@master
         with:
-          github-run-id: ${{ github.run_id }}
-          slack-notify-event: DEPLOYMENT_PAUSED
-          commit-message: ${{ github.event.head_commit.message }}
-          webhook-token: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          SLACK_NOTIFY_EVENT: DEPLOYMENT_PAUSED
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
 ```
 
 ---
@@ -100,15 +100,15 @@ jobs:
       - if: (success() || failure()) && steps.last_run.outputs.conclusion != 'success'
         uses: wunderflats/actions/upload-to-test-dashboard@master
         with:
-          api-url: https://test-dashboard.wunderflats.xyz/api/test-result
-          repository: my-repo-name
-          branch: my-fantastic-branch
-          test-suite: jest
-          test-file-type: jest
-          commit-hash: ${{ github.sha }}
-          job-id: ${{ github.run_id }}
-          files: ./test-reports/*
-          dashboard-push-token: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
+          API_URL: https://test-dashboard.wunderflats.xyz/api/test-result
+          REPOSITORY: my-repo-name
+          BRANCH: my-fantastic-branch
+          TEST_SUITE: jest
+          TEST_FILE_TYPE: jest
+          COMMIT_HASH: ${{ github.sha }}
+          JOB_ID: ${{ github.run_id }}
+          FILES: ./test-reports/*
+          DASHBOARD_PUSH_TOKEN: ${{ secrets.DASHBOARD_PUSH_TOKEN }}
 ```
 
 ---
