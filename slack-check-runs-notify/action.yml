@@ -2,20 +2,20 @@ name: 'slack-check-runs-notify'
 description: 'Check if there is a job that has failed for this commit and report it to Slack'
 author: 'Wunderflats GmbH'
 inputs:
-  GITHUB_RUN_ID:
+  github-run-id:
     description: "GITHUB_RUN_ID"
     required: true
-  COMMIT_MESSAGE:
+  commit-message:
     description: "COMMIT_MESSAGE"
     required: false
     default: ""
-  WEBHOOK_TOKEN:
+  webhook-token:
     description: "WEBHOOK_TOKEN"
     required: true
-  GITHUB_TOKEN:
+  github-token:
     description: "GITHUB_TOKEN"
     required: true
-  FAILED_MESSAGE:
+  failed-message:
     description: "FAILED_MESSAGE"
     required: false
     default: ""

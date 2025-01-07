@@ -4,15 +4,15 @@ runs:
   using: "node20"
   main: "dist/index.js"
 inputs:
-  GITHUB_TOKEN:
+  github-token:
     description: "GitHub token"
     required: true
-  PACKAGE_NAME:
+  package-name:
     description: "Container name, acceptable values: api-testing, website-testing, crm-testing, lld-testing"
     required: true
-  BULK_CLEANUP:
+  bulk-cleanup:
     description: "Whether the unneeded images should be deleted or not"
     required: true
-  TAG:
+  tag:
     description: "A specific Tag to find and removing the image"
     required: false

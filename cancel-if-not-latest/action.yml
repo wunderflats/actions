@@ -4,6 +4,6 @@ runs:
   using: "node20"
   main: "dist/index.js"
 inputs:
-  GITHUB_TOKEN:
+  github-token:
     description: "GitHub token"
     required: true

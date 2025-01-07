@@ -5,16 +5,16 @@ runs:
   main: "dist/index.js"
 
 inputs:
-  GITHUB_RUN_ID:
+  github-run-id:
     description: "GITHUB_RUN_ID"
     required: true
-  SLACK_NOTIFY_EVENT:
+  slack-notify-event:
     description: "SLACK_NOTIFY_EVENT"
     required: true
-  COMMIT_MESSAGE:
+  commit-message:
     description: "COMMIT_MESSAGE"
     required: false
     default: ""
-  WEBHOOK_TOKEN:
+  webhook-token:
     description: "WEBHOOK_TOKEN"
     required: true
