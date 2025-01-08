@@ -18,11 +18,10 @@ jobs:
     steps:
       - uses: wunderflats/actions/cancel-if-not-latest@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ---
-
 
 ## slack-deploy-notify
 
@@ -77,10 +76,10 @@ jobs:
       - name: notifying
         uses: wunderflats/actions/slack-check-runs-notify@master
         with:
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WEBHOOK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          github_run_id: ${{ github.run_id }}
+          commit-message: ${{ github.event.head_commit.message }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          webhook-token: ${{ secrets.SLACK_TOKEN }}
 ```
 
 ---
@@ -132,7 +131,29 @@ jobs:
       - name: Comment reports
         uses: wunderflats/actions/comment-snyk-report@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPENDENCIES_CHECK_FILE: snyk-dependencies-report.json
-          CODEBASE_CHECK_FILE: snyk-codebase-report.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dependencies-check-file: snyk-dependencies-report.json
+          codebase-check-file: snyk-codebase-report.json
+```
+
+---
+
+## remove-testing-images
+
+Removes a testing image by tag or clean up all unneeded and old images(older than 3 months)
+
+#### Example:
+
+```
+jobs:
+  delete-testing-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete latest testing image
+        uses: wunderflats/actions/remove-testing-images@master
+        with:
+          package-name: "api-testing"
+          tag: "branch-tag"
+          bulk-cleanup: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```

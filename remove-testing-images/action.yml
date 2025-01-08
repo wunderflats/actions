@@ -1,18 +1,18 @@
 name: "remove-testing-images"
-description: "Remove a testing image by tag or clean up all unneeded and old images(untagged, with only one commit hash tag, older than 3 months)"
+description: "Removes a testing image by tag or clean up all unneeded and old images(older than 3 months)"
 runs:
   using: "node20"
   main: "dist/index.js"
 inputs:
-  GITHUB_TOKEN:
+  github-token:
     description: "GitHub token"
     required: true
-  PACKAGE_NAME:
+  package-name:
     description: "Container name, acceptable values: api-testing, website-testing, crm-testing, lld-testing"
     required: true
-  BULK_CLEANUP:
+  bulk-cleanup:
     description: "Whether the unneeded images should be deleted or not"
     required: true
-  TAG:
+  tag:
     description: "A specific Tag to find and removing the image"
     required: false

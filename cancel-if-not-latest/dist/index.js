@@ -9598,7 +9598,7 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN", { required: true });
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("github-token", { required: true });
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 await run();
 async function run() {

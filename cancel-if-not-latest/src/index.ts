@@ -2,7 +2,7 @@ import * as github from "@actions/github";
 import * as core from "@actions/core";
 import * as process from "node:process";
 
-const token = core.getInput("GITHUB_TOKEN", { required: true });
+const token = core.getInput("github-token", { required: true });
 const octokit = github.getOctokit(token);
 
 await run();

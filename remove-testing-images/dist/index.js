@@ -30646,10 +30646,10 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("GITHUB_TOKEN", { required: true });
-const packageName = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("PACKAGE_NAME", { required: true });
-const bulkCleanupInput = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("BULK_CLEANUP", { required: true });
-const tag = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("TAG");
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("github-token", { required: true });
+const packageName = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("package-name", { required: true });
+const bulkCleanupInput = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("bulk-cleanup", { required: true });
+const tag = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("tag");
 const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 const bulkCleanup = bulkCleanupInput === "true";
 const packageType = "container";

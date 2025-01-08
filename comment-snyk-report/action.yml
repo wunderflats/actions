@@ -4,10 +4,10 @@ runs:
   using: "node20"
   main: "dist/index.js"
 inputs:
-  GITHUB_TOKEN:
+  github-token:
     description: "GitHub token"
     required: true
-  DEPENDENCIES_CHECK_FILE:
+  dependencies-check-file:
     description: "The path of dependencies check report"
-  CODEBASE_CHECK_FILE:
+  codebase-check-file:
     description: "The path of codebase check report"
