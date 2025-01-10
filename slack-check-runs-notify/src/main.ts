@@ -6,10 +6,10 @@ const bent = require('bent')
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID!)
 
-const webhookToken = core.getInput('webhook-token')
-const commitMessage = core.getInput('commit-message')
-const token = core.getInput('github-token')
-const failedMessage = core.getInput('failed-message')
+const webhookToken = core.getInput('WEBHOOK_TOKEN')
+const commitMessage = core.getInput('COMMIT_MESSAGE')
+const token = core.getInput('GITHUB_TOKEN')
+const failedMessage = core.getInput('FAILED_MESSAGE')
 
 const octokit = github.getOctokit(token)
 
