@@ -23,30 +23,6 @@ jobs:
 
 ---
 
-## slack-deploy-notify
-
-A github action that sends a slack notification depending on status of running jobs in actions.
-
-#### Example:
-
-```
-jobs:
-  some-job:
-    name: Do Something
-    steps:
-      - id: deploy
-        run: return 1
-      - if: failure()
-        uses: wunderflats/actions/slack-deploy-notify@master
-        with:
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          SLACK_NOTIFY_EVENT: DEPLOYMENT_PAUSED
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          WEBHOOK_TOKEN: ${{ secrets.SLACK_WEBHOOK_TOKEN }}
-```
-
----
-
 ## slack-check-runs-notify
 
 A github action that sends a message to slack if one of the jobs failed
