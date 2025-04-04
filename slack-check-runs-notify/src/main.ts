@@ -1,8 +1,6 @@
 import * as github from '@actions/github'
 import * as core from '@actions/core'
 
-const bent = require('bent')
-
 const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/', 2)
 const GITHUB_RUN_ID = Number.parseInt(process.env.GITHUB_RUN_ID!)
 
@@ -27,7 +25,6 @@ const deploymentTestFail = {
 
 async function run(): Promise<void> {
   const service = 'https://hooks.slack.com/services/'
-  const post = await bent(service, 'POST', 'string', 200)
 
   try {
     console.log({owner, repo, GITHUB_RUN_ID})
@@ -62,13 +59,25 @@ async function run(): Promise<void> {
     console.log({jobStatuses})
 
     const atLeastOneJobFailed = Object.values(jobStatuses).some(
-      jobSucceded => jobSucceded === false
+      jobSucceeded => jobSucceeded === false
     )
 
     console.log({atLeastOneJobFailed})
 
     if (atLeastOneJobFailed) {
-      await post(webhookToken, deploymentTestFail)
+      const response = await fetch(`${service}${webhookToken}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(deploymentTestFail)
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to send Slack notification: ${response.statusText}`
+        )
+      }
     }
   } catch (error) {
     console.error(error)
