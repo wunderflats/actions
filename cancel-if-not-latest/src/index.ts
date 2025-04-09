@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
+import * as process from "node:process";
 
 const token = core.getInput("github-token", { required: true });
 const octokit = github.getOctokit(token);
@@ -14,34 +15,33 @@ async function run() {
     return;
   }
 
-  const thisWorkflowRun = await octokit.rest.actions.getWorkflowRun({
+  const thisCommitSha = github.context.sha;
+
+  const latestCommit = await octokit.rest.repos.getCommit({
     owner,
     repo,
-    run_id: github.context.runId,
+    ref: github.context.ref,
   });
-  const thisWorkflowCreatedAt = thisWorkflowRun.data.created_at;
-  core.info(`Current workflow created at: ${thisWorkflowCreatedAt}`);
+  const latestCommitSha = latestCommit.data.sha;
+  const attempt = process.env.GITHUB_RUN_ATTEMPT;
 
-  // Workflow runs that were created after the current one
-  const latestWorkflowRunsResponse =
-    await octokit.rest.actions.listWorkflowRunsForRepo({
-      owner,
-      repo,
-      branch: github.context.ref.replace("refs/heads/", ""),
-      per_page: 1,
-      created_at: `>${thisWorkflowCreatedAt}`,
-    });
+  core.info(`Current commit SHA: ${thisCommitSha}`);
+  core.info(`Latest commit SHA: ${latestCommitSha}`);
+  core.info(`Attempt: ${attempt}`);
 
-  const newerWorkflowCount = latestWorkflowRunsResponse.data.total_count;
-  core.info(
-    `Found ${newerWorkflowCount} workflows created since ${thisWorkflowCreatedAt}`
-  );
-
-  if (newerWorkflowCount > 0) {
-    const message = "There is a newer workflow run. Cancelling this one.";
-    core.setFailed(message);
+  const isLatestCommit = thisCommitSha === latestCommitSha;
+  if (isLatestCommit) {
+    core.info("All good!");
+    return;
   }
 
-  core.info("All good!");
-  return;
+  const isFirstAttempt = attempt === "1";
+  if (isFirstAttempt) {
+    // Someone has made a new commit in the meantime, but this is still the first attempt of this workflow run
+    core.info("All good!");
+    return;
+  }
+
+  const message = "This workflow run is not the latest commit on this branch";
+  core.setFailed(message);
 }
