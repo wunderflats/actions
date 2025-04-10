@@ -15,6 +15,8 @@ This action cancels a workflow if it is not running on the last commit of a the 
 ```yaml
 jobs:
   deploy-everything:
+    permissions:
+      actions: read
     steps:
       - uses: wunderflats/actions/cancel-if-not-latest@master
         with:

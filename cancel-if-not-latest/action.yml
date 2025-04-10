@@ -1,5 +1,5 @@
 name: "cancel-if-not-latest"
-description: "Cancel a push workflow if it's not triggered by the latest commit of its branch"
+description: "Cancels a workflow if it's not the most recent one of its branch (excluding queued, waiting, requested, pending workflows)"
 runs:
   using: "node20"
   main: "dist/index.js"
