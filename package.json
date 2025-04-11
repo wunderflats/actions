@@ -1,0 +1,17 @@
+{
+  "name": "@wunderflats/actions",
+  "private": true,
+  "main": "dist/main.js",
+  "workspaces": [
+    "build-context",
+    "cancel-if-not-latest",
+    "comment-snyk-report",
+    "remove-testing-images",
+    "slack-check-runs-notify",
+    "slack-deploy-notify",
+    "upload-to-test-dashboard"
+  ],
+  "scripts": {
+    "build": "rm -rf ./dist && ncc build src/index.ts -o dist"
+  }
+}
