@@ -1,10 +1,26 @@
 name: Update MongoDB Docker Image
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 10 * * 2" # Every Tuesday at 10 AM
 
 jobs:
   update-mongo-image:
-    runs-on: ubuntu-latest
+    name: Update MongoDB Image
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull MongoDB Image
+        run: docker pull mongo:8.0
+      - name: Tag and Push MongoDB Image to GHCR
+        run: |
+          docker tag mongo:8.0 ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
+          docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
