@@ -1,0 +1,10 @@
+name: Update MongoDB Docker Image
+
+on: workflow_dispatch
+
+jobs:
+  update-mongo-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
