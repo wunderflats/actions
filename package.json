@@ -13,5 +13,8 @@
   ],
   "scripts": {
     "build": "rm -rf ./dist && ncc build src/index.ts -o dist"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.5"
   }
 }

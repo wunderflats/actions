@@ -3,7 +3,8 @@ import * as github from "@actions/github";
 
 // Input
 const gitRepository = github.context.payload.repository.name;
-const shortImageName = core.getInput("image-name", { required: false }) || gitRepository; 
+const shortImageName =
+  core.getInput("image-name", { required: false }) || gitRepository;
 const defaultBranch = core.getInput("default-branch", { required: false });
 
 // Context

@@ -1,6 +1,6 @@
-import * as github from "@actions/github";
 import * as core from "@actions/core";
-import { parseISO, isBefore, subMonths } from "date-fns";
+import * as github from "@actions/github";
+import { isBefore, parseISO, subMonths } from "date-fns";
 
 const token = core.getInput("github-token", { required: true });
 const packageName = core.getInput("package-name", { required: true });
@@ -19,7 +19,7 @@ async function run() {
   try {
     if (bulkCleanup && tag) {
       throw new Error(
-        "Single image removal and bulk cleanup cannot be done together."
+        "Single image removal and bulk cleanup cannot be done together.",
       );
     }
 
@@ -59,7 +59,7 @@ async function findTestingImageByTag() {
     (response, done) => {
       const testingImages = response.data;
       const targetImage = testingImages.find((v) =>
-        v.metadata.container.tags.includes(tag)
+        v.metadata.container.tags.includes(tag),
       );
 
       if (targetImage) {
@@ -68,7 +68,7 @@ async function findTestingImageByTag() {
       }
 
       return response.data;
-    }
+    },
   );
 
   return imagesWithRequestedTag;
@@ -86,13 +86,13 @@ async function cleanupUnneededTestingImages() {
       org: organization,
       state: "active",
       per_page: 100,
-    }
+    },
   )) {
     const testingImages = response.data;
     for (const image of testingImages) {
       const isOldImage = isBefore(
         parseISO(image.updated_at),
-        subMonths(new Date(), 2)
+        subMonths(new Date(), 2),
       );
 
       if (isOldImage) {
@@ -107,7 +107,7 @@ async function cleanupUnneededTestingImages() {
   }
 
   core.startGroup(
-    `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`
+    `🧹 starting the cleanup of ${imagesToBeDeleted.length} testing images`,
   );
 
   for (const imageId of imagesToBeDeleted) {

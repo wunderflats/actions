@@ -1,8 +1,8 @@
-import * as github from "@actions/github";
-import * as core from "@actions/core";
 import fs from "node:fs";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
 import _ from "lodash";
-import {
+import type {
   SnykCodeTestReport,
   SnykCodeTestReportVulnerability,
   SnykTestReport,
@@ -49,11 +49,11 @@ async function getDependenciesReport(): Promise<string> {
 
   const dependenciesJsonReport = await fs.readFileSync(
     dependenciesCheckFilePath,
-    "utf8"
+    "utf8",
   );
 
   const parsedReport: SnykTestReport[] | SnykTestReport = JSON.parse(
-    dependenciesJsonReport
+    dependenciesJsonReport,
   );
 
   const fullReport: SnykTestReport[] = Array.isArray(parsedReport)
@@ -74,7 +74,7 @@ async function getDependenciesReport(): Promise<string> {
           lows: severityCounts["low"] ?? 0,
         },
       };
-    }
+    },
   );
 
   const formattedReport = `
@@ -101,7 +101,7 @@ async function getCodebaseReport(): Promise<string> {
 
   const codebaseJsonReport = await fs.readFileSync(
     codebaseCheckFilePath,
-    "utf8"
+    "utf8",
   );
 
   const fullReport: SnykCodeTestReport = JSON.parse(codebaseJsonReport);
@@ -112,12 +112,12 @@ async function getCodebaseReport(): Promise<string> {
     .map((results: SnykCodeTestReportVulnerability[], ruleId: string) => ({
       title: _.get(
         _.find(fullReport.runs[0].tool.driver.rules, { id: ruleId }),
-        "shortDescription.text"
+        "shortDescription.text",
       ),
       description: results[0].message.text,
       paths: results.map(
         (result) =>
-          `${result.locations[0].physicalLocation.artifactLocation.uri}, line ${result.locations[0].physicalLocation.region.startLine}`
+          `${result.locations[0].physicalLocation.artifactLocation.uri}, line ${result.locations[0].physicalLocation.region.startLine}`,
       ),
     }))
     .value();
@@ -130,7 +130,7 @@ async function getCodebaseReport(): Promise<string> {
 #### ❌ ${r.title} \n
 ${r.description} \n
 Paths: \n
-${r.paths.map((p: string) => `- \`${p}\``).join("\n")}`
+${r.paths.map((p: string) => `- \`${p}\``).join("\n")}`,
     )
     .join("\n");
 
@@ -167,7 +167,7 @@ async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
       snykComment = commentsOfPR.find(
         (c: any) =>
           c.user?.login === "github-actions[bot]" &&
-          c.body.includes(commentTitle)
+          c.body.includes(commentTitle),
       );
 
       if (snykComment) {
@@ -175,7 +175,7 @@ async function addOrUpdateSnykComment(commentBody: string): Promise<void> {
       }
 
       return response.data;
-    }
+    },
   );
 
   if (!snykComment) {

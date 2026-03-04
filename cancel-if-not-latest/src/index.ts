@@ -1,5 +1,5 @@
-import * as github from "@actions/github";
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 
 const token = core.getInput("github-token", { required: true });
 const octokit = github.getOctokit(token);
@@ -41,9 +41,8 @@ async function run() {
   core.info(`Will query for workflows: ${paramsString}`);
 
   // Workflow runs that were created after the current one
-  const response = await octokit.rest.actions.listWorkflowRunsForRepo(
-    queryParams
-  );
+  const response =
+    await octokit.rest.actions.listWorkflowRunsForRepo(queryParams);
 
   const runs = response.data.workflow_runs;
   core.info(`Total workflow run count: ${runs.length}`);
