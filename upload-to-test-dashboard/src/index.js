@@ -1,8 +1,7 @@
-import shell from "shelljs";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
 import chalk from "chalk";
 import config from "./config";
-
-shell.set("-e");
 
 const print = (message = "") => process.stdout.write(message);
 
@@ -24,19 +23,14 @@ function getUploadUrl() {
 }
 
 function uploadFile(url, file) {
-  const result = shell.exec(
+  const stdout = execSync(
     `curl -X POST --retry 3 --retry-delay 5 -F "testFile=@${file}" "${url}"`,
-    { silent: true },
+    { encoding: "utf8" },
   );
 
-  if (result.code !== 0) {
-    throw new Error(`curl exit code: ${result.code}`);
-  }
-
   let response;
-
   try {
-    response = JSON.parse(result.stdout);
+    response = JSON.parse(stdout);
   } catch (error) {
     throw new Error(
       `API response does not seem to be a valid JSON: ${error.message}`,
@@ -48,18 +42,10 @@ function uploadFile(url, file) {
   }
 }
 
-function listFiles(path) {
-  try {
-    return shell.ls(path);
-  } catch (error) {
-    throw new Error(`Could not list ${path}: ${error.message}`);
-  }
-}
-
 function run() {
   const uploadUrl = getUploadUrl();
 
-  const files = listFiles(config.files);
+  const files = fs.globSync(config.files);
 
   if (files.length === 0) {
     throw new Error(`No files found to upload matching ${config.files}`);
@@ -81,7 +67,7 @@ function run() {
       println(`${chalk.red("[FAILED]")} ${chalk.dim(error.message)}`);
       failed++;
     } finally {
-      shell.exec("sleep 2");
+      execSync("sleep 2");
     }
   });
 
