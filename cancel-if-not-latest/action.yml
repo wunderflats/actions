@@ -1,7 +1,7 @@
 name: "cancel-if-not-latest"
 description: "Cancels a workflow if it's not the most recent one of its branch (excluding queued, waiting, requested, pending workflows)"
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"
 inputs:
   github-token:

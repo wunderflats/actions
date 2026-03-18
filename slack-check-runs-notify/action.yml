@@ -2,7 +2,7 @@ name: 'slack-check-runs-notify'
 description: 'Check if there is a job that has failed for this commit and report it to Slack'
 author: 'Wunderflats GmbH'
 runs:
-  using: node20
+  using: node24
   main: 'dist/index.js'
 inputs:
   GITHUB_RUN_ID:

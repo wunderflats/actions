@@ -1,7 +1,7 @@
 name: "comment-snyk-report"
 description: "Add a comment on the PR with Snyk report"
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"
 inputs:
   github-token:
