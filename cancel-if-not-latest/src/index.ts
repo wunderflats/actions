@@ -51,20 +51,17 @@ async function run() {
   const ignoreStatus = ["queued", "waiting", "requested", "pending"];
   const relevantRuns = response.data.workflow_runs
     .filter((run) => run.id !== thisRunId)
-    .filter((run) => !ignoreStatus.includes(run.status));
+    .filter((run) => run.status && !ignoreStatus.includes(run.status));
 
   if (relevantRuns.length > 0) {
-    for (const workflow of response.data.workflow_runs) {
-      const logItem = {
-        id: workflow.id,
-        name: workflow.name,
-        created_at: workflow.created_at,
-        html_url: workflow.html_url,
-        status: workflow.status,
-      };
+    for (const run of relevantRuns) {
+      const { id, name, created_at, html_url, status } = run;
+      const logItem = { id, name, created_at, html_url, status };
       core.info(JSON.stringify(logItem, null, 2));
     }
+
     core.setFailed("There is a newer workflow run. Cancelling this one.");
+
     return;
   }
 
