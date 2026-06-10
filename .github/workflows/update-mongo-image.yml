@@ -24,3 +24,7 @@ jobs:
         run: |
           docker tag mongo:8.0 ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
           docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
+      - name: Build and Push Replica-Set Variant to GHCR
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs docker/mongo-rs
+          docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs
