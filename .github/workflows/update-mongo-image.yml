@@ -12,6 +12,7 @@ jobs:
     permissions:
       packages: write
     steps:
+      - uses: actions/checkout@v6
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
@@ -24,3 +25,7 @@ jobs:
         run: |
           docker tag mongo:8.0 ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
           docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
+      - name: Build and Push Replica-Set Variant to GHCR
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs docker/mongo-rs
+          docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs
