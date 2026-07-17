@@ -39546,7 +39546,7 @@ const table = process.env.INPUT_TABLE || "test_results";
 
 const repo = process.env.GITHUB_REPOSITORY;
 const workflow = process.env.GITHUB_WORKFLOW;
-const branch = process.env.GITHUB_REF_NAME;
+const isDefaultBranch = process.env.GITHUB_REF_NAME === "master";
 const commitSha = process.env.GITHUB_SHA;
 const runId = process.env.GITHUB_RUN_ID;
 
@@ -39561,15 +39561,6 @@ function deriveStatus(tc) {
   if (tc.error !== undefined) return "error";
   if (tc.skipped !== undefined) return "skipped";
   return "passed";
-}
-
-function extractFailure(tc) {
-  const node = tc.failure ?? tc.error ?? null;
-  if (!node) return { failureMessage: null, failureDetails: null };
-  return {
-    failureMessage: node["@_message"] ?? null,
-    failureDetails: typeof node === "object" ? (node["#text"] ?? null) : null,
-  };
 }
 
 function parseFile(filePath) {
@@ -39587,13 +39578,12 @@ function parseFile(filePath) {
     const suiteName = suite["@_name"] ?? null;
 
     for (const tc of suite.testcase ?? []) {
-      const { failureMessage, failureDetails } = extractFailure(tc);
       rows.push({
         run_at: runAt,
         inserted_at: insertedAt,
         repo,
         workflow,
-        branch,
+        is_default_branch: isDefaultBranch,
         commit_sha: commitSha,
         github_run_id: runId,
         test_type: testType,
@@ -39602,8 +39592,6 @@ function parseFile(filePath) {
         test_name: tc["@_name"] ?? null,
         status: deriveStatus(tc),
         duration_seconds: parseFloat(tc["@_time"]) || 0,
-        failure_message: failureMessage,
-        failure_details: failureDetails,
       });
     }
   }
