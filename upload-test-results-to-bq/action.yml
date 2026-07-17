@@ -1,0 +1,43 @@
+name: "Upload test results to BigQuery"
+description: "Parse JUnit XML test results and insert them into BigQuery"
+author: "Wunderflats GmbH"
+
+inputs:
+  xml_path:
+    description: "Glob pattern matching JUnit XML report files"
+    required: true
+  test_type:
+    description: "Label for the test type (e.g. jest, cypress, wdio)"
+    required: true
+  service_account:
+    description: "GCP service account email to impersonate via WIF"
+    required: true
+  workload_identity_provider:
+    description: "Workload Identity Federation provider resource name"
+    required: true
+  project:
+    description: "GCP project ID of the BigQuery dataset"
+    required: true
+  dataset:
+    description: "BigQuery dataset ID"
+    default: "ci_metrics"
+  table:
+    description: "BigQuery table ID"
+    default: "test_results"
+
+runs:
+  using: composite
+  steps:
+    - uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: ${{ inputs.workload_identity_provider }}
+        service_account: ${{ inputs.service_account }}
+    - name: Load test results into BigQuery
+      shell: bash
+      run: node "${{ github.action_path }}/dist/index.js"
+      env:
+        INPUT_XML_PATH: ${{ inputs.xml_path }}
+        INPUT_TEST_TYPE: ${{ inputs.test_type }}
+        INPUT_PROJECT: ${{ inputs.project }}
+        INPUT_DATASET: ${{ inputs.dataset }}
+        INPUT_TABLE: ${{ inputs.table }}

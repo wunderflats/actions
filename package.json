@@ -9,7 +9,8 @@
     "remove-testing-images",
     "slack-check-runs-notify",
     "slack-deploy-notify",
-    "upload-to-test-dashboard"
+    "upload-to-test-dashboard",
+    "upload-test-results-to-bq"
   ],
   "scripts": {
     "build": "rm -rf ./dist && ncc build src/index.ts -o dist"
