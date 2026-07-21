@@ -32,20 +32,9 @@ jobs:
             -t ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs \
             docker/mongo-rs
           docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs
-      - name: Resolve latest MongoDB Atlas Local 8.0 tag
-        id: atlas-tag
-        run: |
-          TAG=$(curl -s "https://hub.docker.com/v2/repositories/mongodb/mongodb-atlas-local/tags?page_size=100" | \
-            python3 -c "
-          import sys, json, re
-          d = json.load(sys.stdin)
-          tags = [t['name'] for t in d['results'] if re.match(r'^8\.0\.\d+$', t['name'])]
-          print(sorted(tags, key=lambda v: list(map(int, v.split('.'))))[-1])
-          ")
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
       - name: Pull and Push MongoDB Atlas Local to GHCR
         run: |
-          docker pull mongodb/mongodb-atlas-local:${{ steps.atlas-tag.outputs.tag }}
-          docker tag mongodb/mongodb-atlas-local:${{ steps.atlas-tag.outputs.tag }} \
-            ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-atlas-local
-          docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-atlas-local
+          docker pull mongodb/mongodb-atlas-local:8.0
+          docker tag mongodb/mongodb-atlas-local:8.0 \
+            ghcr.io/${{ github.repository_owner }}/mongodb-atlas-local:8.0-atlas-local
+          docker push ghcr.io/${{ github.repository_owner }}/mongodb-atlas-local:8.0-atlas-local
