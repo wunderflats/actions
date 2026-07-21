@@ -33,5 +33,5 @@ jobs:
         run: |
           docker pull mongodb/mongodb-atlas-local:8.0
           docker tag mongodb/mongodb-atlas-local:8.0 \
-            ghcr.io/${{ github.repository_owner }}/mongodb/mongodb-atlas-local:8.0
+            ghcr.io/${{ github.repository_owner }}/mongodb-atlas-local:8.0
           docker push ghcr.io/${{ github.repository_owner }}/mongodb-atlas-local:8.0
