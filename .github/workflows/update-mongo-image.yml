@@ -27,10 +27,7 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0
       - name: Build and Push Replica-Set Variant to GHCR
         run: |
-          docker build \
-            --build-arg MONGO_IMAGE=ghcr.io/${{ github.repository_owner }}/mongo-image:8.0 \
-            -t ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs \
-            docker/mongo-rs
+          docker build -t ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs docker/mongo-rs
           docker push ghcr.io/${{ github.repository_owner }}/mongo-image:8.0-rs
       - name: Pull and Push MongoDB Atlas Local to GHCR
         run: |

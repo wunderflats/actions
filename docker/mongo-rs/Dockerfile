@@ -1,5 +1,4 @@
-ARG MONGO_IMAGE=mongo:8.0
-FROM ${MONGO_IMAGE}
+FROM mongo:8.0
 
 # Bake replica-set mode into the default command so consumers can use this
 # image directly as a GitHub Actions `services:` container. The services
