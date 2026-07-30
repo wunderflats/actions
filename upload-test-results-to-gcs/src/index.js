@@ -24,8 +24,14 @@ const runAttempt = process.env.GITHUB_RUN_ATTEMPT ?? "1";
   const prefix = `${repoSlug}/${runId}/${runAttempt}/${testType}`;
 
   for (const file of files) {
+    const baseName = path.basename(file, path.extname(file));
+    const metaFile = path.join(path.dirname(file), `${baseName}.json`);
+    fs.writeFileSync(metaFile, JSON.stringify({ workflow_run_id: runId }));
+
     const dest = `${prefix}/${path.basename(file)}`;
+    const metaDest = `${prefix}/${baseName}.json`;
     await bucket.upload(file, { destination: dest });
+    await bucket.upload(metaFile, { destination: metaDest });
     console.log(`Uploaded ${file} → gs://${bucketName}/${dest}`);
   }
 })().catch((err) => {

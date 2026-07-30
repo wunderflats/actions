@@ -10,6 +10,6 @@
     "@google-cloud/storage": "7.16.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "0.38.3"
+    "@vercel/ncc": "0.38.1"
   }
 }
