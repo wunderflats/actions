@@ -1,0 +1,35 @@
+name: "Upload test results to GCS"
+description: "Upload JUnit XML test result files to a GCS bucket"
+author: "Wunderflats GmbH"
+
+inputs:
+  xml_path:
+    description: "Glob pattern matching JUnit XML report files"
+    required: true
+  test_type:
+    description: "Label for the test type (e.g. jest, mocha, vitest)"
+    required: true
+  bucket:
+    description: "GCS bucket name"
+    required: true
+  service_account:
+    description: "GCP service account email to impersonate via WIF"
+    required: true
+  workload_identity_provider:
+    description: "Workload Identity Federation provider resource name"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: ${{ inputs.workload_identity_provider }}
+        service_account: ${{ inputs.service_account }}
+    - name: Upload test results to GCS
+      shell: bash
+      run: node "${{ github.action_path }}/dist/index.js"
+      env:
+        INPUT_XML_PATH: ${{ inputs.xml_path }}
+        INPUT_TEST_TYPE: ${{ inputs.test_type }}
+        INPUT_BUCKET: ${{ inputs.bucket }}
