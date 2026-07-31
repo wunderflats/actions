@@ -9,6 +9,7 @@
     "remove-testing-images",
     "slack-check-runs-notify",
     "slack-deploy-notify",
+    "upload-test-results-to-gcs",
     "upload-to-test-dashboard"
   ],
   "scripts": {
