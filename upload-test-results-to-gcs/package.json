@@ -7,7 +7,7 @@
     "check": "biome check --write"
   },
   "dependencies": {
-    "@google-cloud/storage": "7.16.0"
+    "@google-cloud/storage": "7.21.0"
   },
   "devDependencies": {
     "@vercel/ncc": "0.38.1"
