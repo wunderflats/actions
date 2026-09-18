@@ -17,6 +17,12 @@ if (github.context.eventName === "pull_request") {
 } else if (github.context.eventName === "push") {
   gitSha = github.context.sha;
   gitBranch = process.env.GITHUB_REF_NAME;
+} else if (github.context.eventName === "merge_group") {
+  gitSha = github.context.payload.merge_group.head_sha;
+  gitBranch = github.context.payload.merge_group.head_ref.replace(
+    "refs/heads/",
+    "",
+  );
 } else {
   throw new Error(`Unsupported event: ${github.context.eventName}`);
 }
