@@ -1,0 +1,10 @@
+# Review gates: the actions that enforce the Wunderflats review policy in every Tier 1 repo.
+# A change here changes what can merge without a human review, so Platform reviews it.
+# Plan: https://github.com/wunderflats/agentic-tech-plugins/blob/main/docs/review-enforcement-plan.md
+
+/codeowners-sync/        @wunderflats/agentic-technology-platform
+/review-classification/  @wunderflats/agentic-technology-platform
+/ai-review-complete/     @wunderflats/agentic-technology-platform
+
+# This file decides who reviews the gates.
+/.github/CODEOWNERS      @wunderflats/agentic-technology-platform
