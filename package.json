@@ -5,6 +5,7 @@
   "workspaces": [
     "build-context",
     "cancel-if-not-latest",
+    "codeowners-sync",
     "comment-snyk-report",
     "remove-testing-images",
     "slack-check-runs-notify",

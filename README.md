@@ -106,3 +106,9 @@ jobs:
           bulk-cleanup: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+---
+
+## codeowners-sync
+
+Generates `.github/CODEOWNERS` from `.github/critical-paths.yml` and fails a PR when the two differ, or when an owner team cannot own the repo. One of the review gates. See [codeowners-sync/README.md](codeowners-sync/README.md).
