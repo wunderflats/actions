@@ -15,7 +15,7 @@ const SETUP = `  review-setup:\n    owners: ["${PLATFORM}"]\n    paths: [".githu
 
 function problems(text: string): string[] {
   try {
-    parseMap(text);
+    generate(text, FILES);
     return [];
   } catch (err) {
     assert.ok(err instanceof MapError);
@@ -160,4 +160,49 @@ test("a path that matches no file warns but does not fail", () => {
       (w) => w.includes("/src/pricing/**") && w.includes("pricing"),
     ),
   );
+});
+
+test("a narrow rule after ** sorts after the broad one, whatever the map order", () => {
+  const text = map(
+    `  authorization:\n    owners: ["@wunderflats/a"]\n    paths: ["src/**/policies/*.ts"]\n` +
+      `  pricing:\n    owners: ["@wunderflats/b"]\n    paths: ["src/**"]\n${SETUP}`,
+  );
+  const patterns = generate(text, FILES).rules.map((r) => r.pattern);
+  assert.ok(
+    patterns.indexOf("/src/**") < patterns.indexOf("/src/**/policies/*.ts"),
+  );
+});
+
+test("another area cannot take over a path inside review-setup", () => {
+  for (const path of [
+    ".github/workflows/deploy.yml",
+    ".github/workflows/",
+    ".github/workflows",
+    ".github/CODEOWNERS",
+    ".github/critical-paths.yml",
+  ]) {
+    const out = problems(
+      map(
+        `  payments:\n    owners: ["@wunderflats/x"]\n    paths: ["${path}"]\n${SETUP}`,
+      ),
+    );
+    assert.ok(
+      out.some((p) => p.includes("inside") && p.includes("review-setup")),
+      path,
+    );
+  }
+});
+
+test("review-setup itself may list narrower workflow paths", () => {
+  const text = map(
+    `  review-setup:\n    owners: ["${PLATFORM}"]\n    paths: [".github/workflows/review-classification.yml"]\n`,
+  );
+  assert.ok(generate(text, FILES).rules.length > 0);
+});
+
+test("paths next to the review setup stay allowed", () => {
+  const text = map(
+    `  payments:\n    owners: ["${PLATFORM}"]\n    paths: [".github/workflows-docs/**", ".github/dependabot.yml"]\n${SETUP}`,
+  );
+  assert.ok(generate(text, FILES).rules.length > 0);
 });

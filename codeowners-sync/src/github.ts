@@ -56,7 +56,13 @@ export async function codeownersErrors(
     `/repos/${repo.owner}/${repo.repo}/codeowners/errors?ref=${encodeURIComponent(ref)}`,
     token,
   );
-  if (res.status === 404) return [];
+  // 404 means GitHub found no CODEOWNERS it would use at this commit, or no commit.
+  // Either way the parse did not happen, so the gate fails closed.
+  if (res.status === 404) {
+    throw new Error(
+      `GitHub found no CODEOWNERS file it would use at ${ref}. It reads .github/, the repo root or docs/ only.`,
+    );
+  }
   if (!res.ok) {
     throw new Error(
       `Reading CODEOWNERS errors failed: HTTP ${res.status} ${await res.text()}`,

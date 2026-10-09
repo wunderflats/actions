@@ -8,18 +8,18 @@ With "Require review from Code Owners" on and zero required approvals, GitHub as
 
 | Check | Result |
 |---|---|
-| The map is invalid: bad YAML, an unknown key, an owner that is not `@org/team`, a catch-all path, or no `review-setup` area | Fails |
+| The map is invalid: bad YAML, an unknown key, an owner that is not `@org/team`, a path with no literal part (`*`, `**/**`), no `review-setup` area, or another area claiming a path inside the review setup | Fails |
 | CODEOWNERS differs from what the map produces, or is missing | Fails. The job summary shows the expected file. |
 | An owner team does not exist, or has less than write access to the repo | Fails. GitHub would ignore it. |
-| GitHub's own parse of CODEOWNERS at the PR head reports an error | Fails |
+| GitHub's own parse of CODEOWNERS at the PR head reports an error, or GitHub finds no CODEOWNERS it would use | Fails |
 | A path matches no file in the repo | Warns. A new repo can map paths before the code exists. |
 | The action itself errors | Fails. The gate never fails open. |
 
 ## What it generates
 
 - Only critical paths get owners. There is no catch-all line.
-- Lines run from broadest to narrowest, because the last matching line wins.
-- `review-setup` always covers the map, CODEOWNERS and `.github/workflows/**`, even when the map leaves them out.
+- Lines run from broadest to narrowest, because the last matching line wins. Rank: literal folder depth before the first wildcard, then literal characters in the whole pattern. Nested paths always order correctly. For two unrelated wildcard patterns that happen to overlap, the rank is a heuristic.
+- `review-setup` always covers the map, CODEOWNERS and `.github/workflows/**`, even when the map leaves them out. No other area may list a path inside them, so nobody else can own the review machinery.
 - A path in two areas becomes one line with both teams.
 - Paths with a slash in the middle get a leading `/`. GitHub reads them as anchored either way.
 

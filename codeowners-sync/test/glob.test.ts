@@ -50,8 +50,20 @@ test("dots and other regex characters are literal", () => {
 });
 
 test("catch-alls and syntax CODEOWNERS lacks are rejected", () => {
-  for (const p of ["*", "/*", "**", "/**", "/"])
-    assert.match(patternProblem(p) ?? "", /catch-all/);
+  for (const p of [
+    "*",
+    "/*",
+    "**",
+    "/**",
+    "/",
+    "***",
+    "**/**",
+    "/**/**",
+    "*/",
+    "?*",
+    "*/*",
+  ])
+    assert.match(patternProblem(p) ?? "", /catch-all/, p);
   assert.match(patternProblem("!src/a") ?? "", /negation/);
   assert.match(patternProblem("src/[ab]") ?? "", /ranges/);
   assert.match(patternProblem("my dir/**") ?? "", /space/);
@@ -64,4 +76,11 @@ test("deeper literal paths rank narrower", () => {
   const [c] = specificity("/src/payments/refunds/**");
   const [d] = specificity("*.sql");
   assert.ok(d < a && a < b && b < c);
+});
+
+test("a pattern that extends another after ** ranks narrower", () => {
+  const [da, la] = specificity("/src/**");
+  const [db, lb] = specificity("/src/**/policies/*.ts");
+  assert.equal(da, db);
+  assert.ok(la < lb);
 });

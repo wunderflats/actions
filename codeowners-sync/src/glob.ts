@@ -1,15 +1,17 @@
 // CODEOWNERS path patterns, as GitHub reads them.
 // https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#codeowners-syntax
 
-const CATCH_ALL = new Set(["*", "/*", "**", "/**", "/", "**/*", "/**/*"]);
+// A pattern made only of wildcards and slashes (`*`, `***`, `**/**`, `*/`) has no
+// literal path part, so it matches whole swaths of the repo, not a critical area.
+const NO_LITERAL = /^[*?/]+$/;
 
 // Returns why GitHub would misread the pattern, or null when it is fine.
 export function patternProblem(pattern: string): string | null {
   if (pattern.trim() !== pattern || pattern === "") {
     return "is empty or has leading or trailing spaces";
   }
-  if (CATCH_ALL.has(pattern)) {
-    return "is a catch-all. Only critical paths get owners";
+  if (NO_LITERAL.test(pattern)) {
+    return "is a catch-all: it has no literal path part. Only critical paths get owners";
   }
   if (pattern.startsWith("!")) {
     return "starts with `!`. CODEOWNERS has no negation";
@@ -38,17 +40,18 @@ function isAnchored(pattern: string): boolean {
   return normalize(pattern).startsWith("/");
 }
 
-// Literal directory depth before the first wildcard. Higher means narrower.
+// Higher means narrower. First the literal directory depth before the first
+// wildcard, then the literal characters in the whole pattern, so that
+// `/src/**/policies/*.ts` ranks narrower than `/src/**`.
 // Unanchored patterns match at any depth, so they rank broadest.
 export function specificity(pattern: string): [number, number] {
-  if (!isAnchored(pattern)) return [0, pattern.length];
+  const literal = pattern.replace(/[*?/]/g, "").length;
+  if (!isAnchored(pattern)) return [0, literal];
   const segments = normalize(pattern).slice(1).split("/");
   let depth = 0;
-  let literal = 0;
   for (const segment of segments) {
     if (segment === "" || /[*?]/.test(segment)) break;
     depth += 1;
-    literal += segment.length;
   }
   return [depth, literal];
 }

@@ -6,8 +6,8 @@
 # the last matching line wins.
 
 *.sql                              @wunderflats/agentic-technology-platform
-/src/**/policies/*.ts              @wunderflats/agentic-technology-platform
 /migrations/**                     @wunderflats/agentic-technology-platform
+/src/**/policies/*.ts              @wunderflats/agentic-technology-platform
 /src/auth/**                       @wunderflats/agentic-technology-platform
 /src/users/**                      @wunderflats/agentic-technology-platform
 /src/pricing/**                    @wunderflats/agentic-technology-platform

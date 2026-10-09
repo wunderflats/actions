@@ -99,7 +99,41 @@ export function reviewSetupPaths(files: Files): string[] {
   return [`/${files.map}`, `/${files.codeowners}`, "/.github/workflows/**"];
 }
 
+// The review setup pattern a path falls inside, or null.
+function insideReviewSetup(pattern: string, setup: string[]): string | null {
+  for (const s of setup) {
+    if (s.endsWith("/**")) {
+      const dir = s.slice(0, -2);
+      if (pattern.startsWith(dir) || pattern === dir.slice(0, -1)) return s;
+    } else if (pattern === s) {
+      return s;
+    }
+  }
+  return null;
+}
+
 export function buildRules(areas: Area[], files: Files): Rule[] {
+  // Another area inside the review setup would sort after it (or share its line)
+  // and hand the setup to other owners, because the last matching line wins.
+  const setupArea = areas.find((a) => a.name === REVIEW_SETUP);
+  const setup = [...(setupArea?.paths ?? []), ...reviewSetupPaths(files)].map(
+    normalize,
+  );
+  const problems: string[] = [];
+  for (const area of areas) {
+    if (area.name === REVIEW_SETUP) continue;
+    for (const path of area.paths) {
+      const inside = insideReviewSetup(normalize(path), setup);
+      if (inside) {
+        problems.push(
+          `Area \`${area.name}\`: path \`${path}\` lies inside \`${inside}\`, which ${REVIEW_SETUP} owns. ` +
+            `It would replace the ${REVIEW_SETUP} owners there. Remove it, or list it under ${REVIEW_SETUP}.`,
+        );
+      }
+    }
+  }
+  if (problems.length > 0) throw new MapError(problems);
+
   const byPattern = new Map<string, Rule>();
   const order: string[] = [];
   for (const area of areas) {

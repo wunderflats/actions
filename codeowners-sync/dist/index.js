@@ -28307,8 +28307,11 @@ async function teamAccessProblem(team, repo, token) {
 // GitHub's own parse of the CODEOWNERS file at a commit.
 async function codeownersErrors(repo, ref, token) {
     const res = await get(`/repos/${repo.owner}/${repo.repo}/codeowners/errors?ref=${encodeURIComponent(ref)}`, token);
-    if (res.status === 404)
-        return [];
+    // 404 means GitHub found no CODEOWNERS it would use at this commit, or no commit.
+    // Either way the parse did not happen, so the gate fails closed.
+    if (res.status === 404) {
+        throw new Error(`GitHub found no CODEOWNERS file it would use at ${ref}. It reads .github/, the repo root or docs/ only.`);
+    }
     if (!res.ok) {
         throw new Error(`Reading CODEOWNERS errors failed: HTTP ${res.status} ${await res.text()}`);
     }
@@ -28331,14 +28334,16 @@ async function codeownersErrors(repo, ref, token) {
 /* unused harmony export toRegExp */
 // CODEOWNERS path patterns, as GitHub reads them.
 // https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#codeowners-syntax
-const CATCH_ALL = new Set(["*", "/*", "**", "/**", "/", "**/*", "/**/*"]);
+// A pattern made only of wildcards and slashes (`*`, `***`, `**/**`, `*/`) has no
+// literal path part, so it matches whole swaths of the repo, not a critical area.
+const NO_LITERAL = /^[*?/]+$/;
 // Returns why GitHub would misread the pattern, or null when it is fine.
 function patternProblem(pattern) {
     if (pattern.trim() !== pattern || pattern === "") {
         return "is empty or has leading or trailing spaces";
     }
-    if (CATCH_ALL.has(pattern)) {
-        return "is a catch-all. Only critical paths get owners";
+    if (NO_LITERAL.test(pattern)) {
+        return "is a catch-all: it has no literal path part. Only critical paths get owners";
     }
     if (pattern.startsWith("!")) {
         return "starts with `!`. CODEOWNERS has no negation";
@@ -28365,19 +28370,20 @@ function normalize(pattern) {
 function isAnchored(pattern) {
     return normalize(pattern).startsWith("/");
 }
-// Literal directory depth before the first wildcard. Higher means narrower.
+// Higher means narrower. First the literal directory depth before the first
+// wildcard, then the literal characters in the whole pattern, so that
+// `/src/**/policies/*.ts` ranks narrower than `/src/**`.
 // Unanchored patterns match at any depth, so they rank broadest.
 function specificity(pattern) {
+    const literal = pattern.replace(/[*?/]/g, "").length;
     if (!isAnchored(pattern))
-        return [0, pattern.length];
+        return [0, literal];
     const segments = normalize(pattern).slice(1).split("/");
     let depth = 0;
-    let literal = 0;
     for (const segment of segments) {
         if (segment === "" || /[*?]/.test(segment))
             break;
         depth += 1;
-        literal += segment.length;
     }
     return [depth, literal];
 }
@@ -28698,7 +28704,39 @@ function stringList(value) {
 function reviewSetupPaths(files) {
     return [`/${files.map}`, `/${files.codeowners}`, "/.github/workflows/**"];
 }
+// The review setup pattern a path falls inside, or null.
+function insideReviewSetup(pattern, setup) {
+    for (const s of setup) {
+        if (s.endsWith("/**")) {
+            const dir = s.slice(0, -2);
+            if (pattern.startsWith(dir) || pattern === dir.slice(0, -1))
+                return s;
+        }
+        else if (pattern === s) {
+            return s;
+        }
+    }
+    return null;
+}
 function buildRules(areas, files) {
+    // Another area inside the review setup would sort after it (or share its line)
+    // and hand the setup to other owners, because the last matching line wins.
+    const setupArea = areas.find((a) => a.name === REVIEW_SETUP);
+    const setup = [...(setupArea?.paths ?? []), ...reviewSetupPaths(files)].map(_glob_js__WEBPACK_IMPORTED_MODULE_1__/* .normalize */ .S8);
+    const problems = [];
+    for (const area of areas) {
+        if (area.name === REVIEW_SETUP)
+            continue;
+        for (const path of area.paths) {
+            const inside = insideReviewSetup((0,_glob_js__WEBPACK_IMPORTED_MODULE_1__/* .normalize */ .S8)(path), setup);
+            if (inside) {
+                problems.push(`Area \`${area.name}\`: path \`${path}\` lies inside \`${inside}\`, which ${REVIEW_SETUP} owns. ` +
+                    `It would replace the ${REVIEW_SETUP} owners there. Remove it, or list it under ${REVIEW_SETUP}.`);
+            }
+        }
+    }
+    if (problems.length > 0)
+        throw new MapError(problems);
     const byPattern = new Map();
     const order = [];
     for (const area of areas) {
@@ -28776,8 +28814,8 @@ function teamsOf(rules) {
 /* harmony export */   a: () => (/* binding */ firstDifference),
 /* harmony export */   w: () => (/* binding */ checkLocal)
 /* harmony export */ });
-/* harmony import */ var _glob_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(5601);
-/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(1005);
+/* harmony import */ var _glob_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5601);
+/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(1005);
 
 
 // Everything the check decides without calling GitHub.
@@ -28793,12 +28831,12 @@ function checkLocal(mapText, codeownersText, files, repoFiles) {
         return report;
     }
     try {
-        const { rules, text } = (0,_map_js__WEBPACK_IMPORTED_MODULE_1__/* .generate */ .cM)(mapText, files);
+        const { rules, text } = (0,_map_js__WEBPACK_IMPORTED_MODULE_0__/* .generate */ .cM)(mapText, files);
         report.rules = rules;
         report.expected = text;
     }
     catch (err) {
-        if (!(err instanceof _map_js__WEBPACK_IMPORTED_MODULE_1__/* .MapError */ .pO))
+        if (!(err instanceof _map_js__WEBPACK_IMPORTED_MODULE_0__/* .MapError */ .pO))
             throw err;
         report.errors.push(...err.problems.map((p) => `${files.map}: ${p}`));
         return report;
@@ -28811,7 +28849,7 @@ function checkLocal(mapText, codeownersText, files, repoFiles) {
     }
     // A glob that matches nothing is a warning, so a new repo can map paths before the code exists.
     for (const rule of report.rules) {
-        if (!(0,_glob_js__WEBPACK_IMPORTED_MODULE_0__/* .matchesAny */ ._I)(rule.pattern, repoFiles)) {
+        if (!(0,_glob_js__WEBPACK_IMPORTED_MODULE_1__/* .matchesAny */ ._I)(rule.pattern, repoFiles)) {
             report.warnings.push(`\`${rule.pattern}\` (${rule.areas.join(", ")}) matches no file in the repo.`);
         }
     }
