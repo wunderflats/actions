@@ -1,0 +1,21 @@
+name: "codeowners-sync"
+description: "Fails when CODEOWNERS differs from what .github/critical-paths.yml produces, or when a code owner team cannot own the repo"
+runs:
+  using: "node24"
+  main: "dist/index.js"
+inputs:
+  app-token:
+    description: "Installation token of the wf-review-gates App. Reads which teams have write access to the repo."
+    required: true
+  github-token:
+    description: "Token that reads the repo. Asks GitHub to parse CODEOWNERS at the PR's head commit."
+    required: false
+    default: ${{ github.token }}
+  map-path:
+    description: "Path of the critical path map"
+    required: false
+    default: ".github/critical-paths.yml"
+  codeowners-path:
+    description: "Path of the generated CODEOWNERS file"
+    required: false
+    default: ".github/CODEOWNERS"

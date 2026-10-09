@@ -1,0 +1,45 @@
+# Worked example. The paths are illustrative, not a real repo's.
+# A real repo copies the template from the wf-quality review-policy skill and fills in its own paths.
+
+areas:
+  pricing:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/pricing/**"
+      - "src/listings/price-calculator.ts"
+  payments:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/payments/**"
+  authentication:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/auth/**"
+  authorization:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/permissions/**"
+      - "src/**/policies/*.ts"
+  personal-data:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/users/**"
+      - "src/users/export/**"
+  contracts:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/contracts/**"
+  booking-states:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "src/bookings/state/**"
+  database-migrations:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - "migrations/**"
+      - "*.sql"
+  # The map, CODEOWNERS and .github/workflows/** are added to review-setup automatically.
+  review-setup:
+    owners: ["@wunderflats/agentic-technology-platform"]
+    paths:
+      - ".github/critical-paths.yml"
